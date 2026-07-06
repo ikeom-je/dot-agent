@@ -1,0 +1,12 @@
+# Codex CLI 設定のプラクティス例(詳細は README.md の「設定ファイルの方針」)
+# Codex はリポジトリ直下の AGENTS.md をネイティブに読むため、追加のコンテキスト設定は不要。
+
+# モデルは導入プロジェクトで選ぶ(プレースホルダ)
+# model = "gpt-5.2-codex"
+
+# worker として使うため、危険操作は承認を求めつつサンドボックス内で自走させる
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = false

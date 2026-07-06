@@ -1,0 +1,48 @@
+---
+name: bolt
+description: 新しいトピック(企画・機能・調査)の作業を始めるとき、または進行中の bolt の現在地を確認して次の一手を決めるときに使う。AI-DLC の1サイクルを開始から収束まで導く進行役。
+---
+
+# bolt — 1サイクルの進行役
+
+bolt は「1トピックを数時間〜1セッションで収束させる」作業単位。
+全体プロセスは [docs/process/lifecycle.md](../../../docs/process/lifecycle.md) を参照。
+
+## 開始手順
+
+1. **サイズ確認** — トピックが1セッションで収束するサイズか判断する。大きければ分割し、
+   最初の1つだけ始める。
+2. **ブランチ作成** — `git checkout -b bolt/YYYY-MM-DD-<topic>`
+3. **work ディレクトリ作成** — `docs/work/YYYY-MM-DD-<topic>/` を作り、`intent.md` を記入する
+   (テンプレート: [docs/work/README.md](../../../docs/work/README.md))。
+   intent は3行でもよいが、「やらないこと」と「完了の定義」は必ず書く。
+
+## フェーズ判定と進行
+
+現在地は**成果物の有無**で判定する(詳細は lifecycle.md の「フェーズ判定基準」):
+
+| 無いファイル | いるフェーズ | 使うもの |
+|---|---|---|
+| intent.md | 企画 | このスキルの開始手順 |
+| prfaq.md(上流boltのみ) | PRFAQ | `prfaq` スキル |
+| ux-research.md(上流boltのみ) | UX調査 | `ux-research` スキル |
+| spec.md | 要件 | work/README.md の spec テンプレート |
+| plan.md | 設計 | [design-doc テンプレート](../../../docs/design/templates/design-doc.md) |
+| (planに未完了タスク) | 実装 | [test.md](../../../docs/process/test.md)・`cli-routing` スキル |
+| verification.md | 収束 | 下の完了チェックリスト |
+
+各フェーズの完了条件を満たしたら次へ。飛ばさない(実装依頼でも intent と spec を先に書く)。
+
+## 実装フェーズの注意
+
+- 委譲判断は `cli-routing` スキルに従う。
+- diff が intent の範囲を超えたら [docs/process/git.md](../../../docs/process/git.md) の分割基準に従う。
+- テストループの停止条件は [docs/process/test.md](../../../docs/process/test.md)。3回で止まる。
+
+## 完了チェックリスト(収束)
+
+- [ ] テストグリーンを自分で実行して確認した(subagent の申告ではなく)
+- [ ] クロスモデルレビューが収束した([docs/process/review.md](../../../docs/process/review.md))
+- [ ] `verification.md` に検証記録・レビュー採否・未解決事項を書いた
+- [ ] squash merge して bolt ブランチを削除した
+- [ ] 続きのトピックがあれば新しい bolt の intent として起票した(このboltを膨らませない)

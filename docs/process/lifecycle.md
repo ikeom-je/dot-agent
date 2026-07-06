@@ -16,13 +16,19 @@ dot-agent のプロセスは、上流(企画)から下流(実装)までを **bol
 | 7 | テスト・レビュー | 実装 diff | レビュー指摘と反映 | [review.md](review.md) の収束条件を満たす | [review.md](review.md) |
 | 8 | 収束(close) | 全成果物 | `verification.md` + merge | 検証記録が書かれ、ブランチが merge・削除済み | [git.md](git.md) |
 
+**各フェーズの成果物は、完了条件を満たすだけでは完了にならない。**
+「計画→作成→検証→相互レビュー→収束」の成果物ミニループ([review.md](review.md))が
+収束して初めてフェーズ完了とする。レビュー対象フェーズと往復回数は
+[AGENTS.md](../../AGENTS.md) の収束パラメータ(`review_gate_phases` / `max_review_rounds`)に従う。
+
 上流だけの bolt(企画のみ)ではフェーズ 1〜4 で収束してよい。その場合の成果物は
 `verification.md` の代わりに「次の bolt への引き継ぎメモ」を intent.md 末尾に書く。
 
 ## bolt とは
 
-- **1 bolt = 1 トピック**(企画1件、機能1つ、調査1テーマ)。数時間〜1セッションで完結するサイズに切る。
-- 1セッションで終わらない見込みなら、bolt を分割する。bolt を大きくしない。
+- **1 bolt = 1 トピック**(企画1件、機能1つ、調査1テーマ)。`bolt_max_size` の範囲で
+  完結するサイズに切る。
+- 上限内に終わらない見込みなら、bolt を分割する。bolt を大きくしない。
 - 各 bolt は `docs/work/YYYY-MM-DD-<topic>/` に成果物を残す:
 
 ```

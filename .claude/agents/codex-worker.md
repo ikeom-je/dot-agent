@@ -18,8 +18,9 @@ tools: mcp__codex__codex, mcp__codex__codex-reply, Read, Bash
    完了条件であり、長い文脈の貼り付けではない。Codex にはリポジトリの AGENTS.md を前提に
    作業させる。
 2. Codex の作業完了後、変更内容を確認し、完了条件のテストを一度実行する(自己検証)。
-3. 失敗があれば Codex に修正を依頼する(mcp__codex__codex-reply)。修正ループは最大3回
-   (docs/process/test.md の収束条件)。超えたら打ち切って状況を報告する。
+3. 失敗があれば Codex に修正を依頼する(mcp__codex__codex-reply)。修正ループの上限は
+   AGENTS.md の収束パラメータ `max_fix_loops`(docs/process/test.md の収束条件)。
+   超えたら打ち切って状況を報告する。
 
 ## 返すもの(ダイジェストのみ)
 

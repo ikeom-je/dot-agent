@@ -8,6 +8,8 @@ docs/work/2026-07-06-example-topic/
 ├── intent.md         # 必須。bolt の目的
 ├── prfaq.md          # 上流bolt。テンプレート: ../product/templates/prfaq.md
 ├── ux-research.md    # 上流bolt。テンプレート: ../product/templates/ux-research.md
+├── user-story.md     # UXを含むbolt。テンプレート: ../product/templates/user-story.md
+├── ux-design.md      # UIのあるプロダクト。テンプレート: ../product/templates/ux-design.md
 ├── spec.md           # 要件
 ├── plan.md           # 設計・タスク分解
 └── verification.md   # 収束の証跡

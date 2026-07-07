@@ -14,7 +14,8 @@ dot-agent は、Claude Code をオーケストレーター、Codex / Antigravity
 
 1. **bolt 原則** — 作業は必ず bolt(1トピック・1ブランチ・1 work ディレクトリ)として行う。
    フェーズを飛ばさない。大きければ分割する。
-2. **ミニループ原則** — どのフェーズの成果物(intent / PRFAQ / UX調査 / spec / plan / コード)も、
+2. **ミニループ原則** — どのフェーズの成果物(intent / PRFAQ / UX調査 / ユーザーストーリー /
+   UX設計 / spec / plan / コード)も、
    「計画→作成→検証→相互レビュー→収束」の同じ小ループで作る。ループ回数は下の
    収束パラメータで打ち切り、超えたら記録して人間にエスカレーション。
    グリーン判定はオーケストレーターが自ら実行して行う。
@@ -31,6 +32,7 @@ dot-agent は、Claude Code をオーケストレーター、Codex / Antigravity
 | `max_fix_loops` | 3 | 同一原因のテスト修正ループの上限([test.md](docs/process/test.md)) | 未知領域・実験的な実装なら 4〜5、枯れた定型実装なら 2 |
 | `max_review_rounds` | 2 | 成果物1つあたりの相互レビュー往復の上限。全フェーズ共通([review.md](docs/process/review.md)) | 品質重視(公開API・課金まわり)なら 3、社内ツール・試作なら 1 |
 | `review_gate_phases` | all | 相互レビューを必須にするフェーズ。`all` = 全成果物 | 試作フェーズのプロジェクトは `spec以降` や `コードのみ` に緩めてよい |
+| `max_phase_bounce` | 2 | 隣接フェーズ間の往復(UX調査↔ユーザーストーリー等)の上限([lifecycle.md](docs/process/lifecycle.md)) | 探索が深いテーマなら 3、定型的な機能追加なら 1 |
 | `bolt_max_size` | 1セッション | 1 bolt の上限サイズ。超える見込みなら分割 | 大規模移行など分割不能な作業のみ 2〜3 セッションに緩める |
 | `escalation_to` | 人間 | 打ち切り時のエスカレーション先 | チーム運用ではレビュー担当者名・チャンネル名を書く |
 
@@ -52,6 +54,8 @@ dot-agent は、Claude Code をオーケストレーター、Codex / Antigravity
 | レビューを依頼・実施するとき | [docs/process/review.md](docs/process/review.md) |
 | PRFAQ を書くとき | [.claude/skills/prfaq/SKILL.md](.claude/skills/prfaq/SKILL.md) |
 | UX 調査をするとき | [.claude/skills/ux-research/SKILL.md](.claude/skills/ux-research/SKILL.md) |
+| ユーザーストーリーを書くとき | [.claude/skills/user-story/SKILL.md](.claude/skills/user-story/SKILL.md) |
+| UX 設計(画面フロー・情報設計)をするとき | [.claude/skills/ux-design/SKILL.md](.claude/skills/ux-design/SKILL.md) |
 | 成果物テンプレートが必要なとき | [docs/work/README.md](docs/work/README.md) / [docs/product/templates/](docs/product/templates/) / [docs/design/templates/](docs/design/templates/) |
 
 ## 記述言語

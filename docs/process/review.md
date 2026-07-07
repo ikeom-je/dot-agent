@@ -1,7 +1,8 @@
 # review.md — 相互レビュー(クロスモデルレビュー)の運用
 
 作った本人(モデル)は自分の間違いに気づきにくい。dot-agent では**全フェーズの成果物**
-(intent / PRFAQ / UX調査 / spec / plan / コード)を、**作ったモデルと別のモデル**が
+(intent / PRFAQ / UX調査 / ユーザーストーリー / UX設計 / spec / plan / コード)を、
+**作ったモデルと別のモデル**が
 レビューすることを基本とする。対象フェーズは `review_gate_phases`、往復回数は
 `max_review_rounds`([AGENTS.md](../../AGENTS.md) の収束パラメータ)に従う。
 

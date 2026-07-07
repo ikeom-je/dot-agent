@@ -26,10 +26,15 @@ bolt は「1トピックを `bolt_max_size` の範囲で収束させる」作業
 | intent.md | 企画 | このスキルの開始手順 |
 | prfaq.md(上流boltのみ) | PRFAQ | `prfaq` スキル |
 | ux-research.md(上流boltのみ) | UX調査 | `ux-research` スキル |
+| user-story.md(UXを含むboltのみ) | ユーザーストーリー | `user-story` スキル |
+| ux-design.md(UIのあるプロダクトのみ) | UX設計 | `ux-design` スキル |
 | spec.md | 要件 | work/README.md の spec テンプレート |
 | plan.md | 設計 | [design-doc テンプレート](../../../docs/design/templates/design-doc.md) |
 | (planに未完了タスク) | 実装 | [test.md](../../../docs/process/test.md)・`cli-routing` スキル |
 | verification.md | 収束 | 下の完了チェックリスト |
+
+上流・UXフェーズの省略可否は [lifecycle.md](../../../docs/process/lifecycle.md) に従い、
+省略する場合は intent.md に1行残す。
 
 各フェーズの成果物は「計画→作成→検証→相互レビュー→収束」のミニループ
 ([docs/process/review.md](../../../docs/process/review.md)、`review_gate_phases` の対象フェーズ)が

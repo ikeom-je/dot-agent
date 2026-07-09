@@ -71,3 +71,6 @@ dot-agent は、Claude Code をオーケストレーター、Codex / Antigravity
 - テスト: `<command>`(グリーン判定に使う正式コマンド)
 - lint/format: `<command>`
 -->
+
+- ドキュメント検証(このリポジトリの正式グリーン判定):
+  `./tools/check-links.sh && ./tools/test-check-links.sh`

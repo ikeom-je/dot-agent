@@ -28,7 +28,9 @@ Claude Code を**指揮者**、Codex / Antigravity(Gemini)を**奏者**として
 | `CLAUDE.md` | AGENTS.md を import + Claude=オーケストレーター宣言 |
 | `GEMINI.md` | AGENTS.md 参照 + Gemini/Antigravity=worker 宣言 |
 | `.claude/skills/bolt/` | 1サイクルの進行役(開始→フェーズ判定→収束チェック) |
-| `.claude/skills/cli-routing/` | CLI 使い分けの判断表・委譲の損益分岐 |
+| `.claude/skills/cli-routing/` | CLI 使い分けの判断表・委譲の損益分岐・失敗時フォールバック |
+| `.claude/skills/cross-review/` | クロスモデルレビューの実行手順(依頼の型・往復プロトコル・採否記録) |
+| `tools/` | check-links.sh: リンク検証(このリポジトリの正式グリーン判定) |
 | `.claude/skills/prfaq/` `.claude/skills/ux-research/` | 上流フェーズのスキル(企画・調査) |
 | `.claude/skills/user-story/` `.claude/skills/ux-design/` | UXフェーズのスキル(ストーリー・体験設計) |
 | `.claude/agents/` | codex-worker / ux-researcher / cross-reviewer subagent |

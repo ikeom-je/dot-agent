@@ -1,5 +1,8 @@
 # review.md — 相互レビュー(クロスモデルレビュー)の運用
 
+具体的なレビュー依頼の手順・プロンプトの型は
+[cross-review スキル](../../.claude/skills/cross-review/SKILL.md) を使う(本docは運用ルール)。
+
 作った本人(モデル)は自分の間違いに気づきにくい。dot-agent では**全フェーズの成果物**
 (intent / PRFAQ / UX調査 / ユーザーストーリー / UX設計 / spec / plan / コード)を、
 **作ったモデルと別のモデル**が

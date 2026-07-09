@@ -35,6 +35,25 @@ Claude Code が指揮者(オーケストレーター)、Codex と Antigravity(Ge
 3. **検証は Claude が行う** — subagent の自己申告 GREEN を信じない。
    [docs/process/test.md](../../../docs/process/test.md) に従い、クリーン状態で自分で実行して判定する。
 
+## 委譲失敗時のフォールバック
+
+委譲先の失敗(空応答・エラー・タイムアウト)への対処:
+
+- 試行は**ひとつの委譲先につき合計 `max_delegation_retries` 回まで**
+  (ティア変更・プロンプト言い換えによる再試行も1回と数える)。
+- 上限に達したらその委譲先を諦め、下表の代替経路を**左から順に**試す。
+  代替経路も同じ上限で数える(失敗し続ける委譲先へのリトライ連打をしない)。
+- 最後の代替(自分で実施)まで失敗したら、bolt の該当タスクを中断して
+  `escalation_to` に報告する。
+
+| 失敗した委譲先 | 代替経路(上から順に) |
+|---|---|
+| Antigravity(検索・調査) | WebSearch を自分で実行 / ux-researcher subagent |
+| Antigravity(生成・移行) | codex-worker / 自分で実装 |
+| Codex(実装・レビュー) | Antigravity / cross-reviewer subagent / 自分で実施 |
+
+フォールバックしたこと・理由は verification.md(上流boltは intent.md 末尾)に1行残す。
+
 ## 呼び出し方
 
 - **Codex へ**: `codex-worker` subagent([.claude/agents/codex-worker.md](../../agents/codex-worker.md))を使う。

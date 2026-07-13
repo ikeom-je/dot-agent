@@ -12,8 +12,11 @@ bolt は「1トピックを `bolt_max_size` の範囲で収束させる」作業
 
 1. **サイズ確認** — トピックが1セッションで収束するサイズか判断する。大きければ分割し、
    最初の1つだけ始める。
-2. **ブランチ作成** — `git checkout -b bolt/YYYY-MM-DD-<topic>`
-3. **work ディレクトリ作成** — `docs/work/YYYY-MM-DD-<topic>/` を作り、`intent.md` を記入する
+2. **プロファイル選択** — 案件の性質(設計重視/MVP速度/スライド共有など)に合わせて
+   [docs/process/workflows.md](../../../docs/process/workflows.md) からプロファイルを選び、
+   **standard を含めて** intent.md に「プロファイル: <名前>」と1行書く。
+3. **ブランチ作成** — `git checkout -b bolt/YYYY-MM-DD-<topic>`
+4. **work ディレクトリ作成** — `docs/work/YYYY-MM-DD-<topic>/` を作り、`intent.md` を記入する
    (テンプレート: [docs/work/README.md](../../../docs/work/README.md))。
    intent は3行でもよいが、「やらないこと」と「完了の定義」は必ず書く。
 

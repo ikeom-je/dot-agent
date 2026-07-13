@@ -1,0 +1,30 @@
+# 秘密情報(絶対にコミットしない)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+secrets/
+
+# OS / エディタ
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/*
+!.vscode/settings.json
+
+# 主要言語の生成物(導入プロジェクトで調整)
+node_modules/
+dist/
+build/
+coverage/
+__pycache__/
+*.pyc
+.venv/
+target/
+
+# ローカル設定・ハーネスの一時ファイル(個人環境のみ)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock

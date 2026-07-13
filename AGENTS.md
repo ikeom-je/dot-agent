@@ -26,6 +26,8 @@ dot-agent は、Claude Code をオーケストレーター、Codex / Antigravity
 
 回数・サイズの数値はここだけで定義する。他の doc・スキルはパラメータ名で参照する。
 プロジェクトに合わせて調整するときは、この表の「値」列を直接編集する。
+bolt 単位の一時調整は、[workflows.md](docs/process/workflows.md) のプロファイルに従って
+intent.md に明記された場合のみ許す(明記があれば、その bolt 内ではそちらを使う)。
 
 | パラメータ | 値 | 意味 | 調整の目安 |
 |---|---|---|---|
@@ -42,6 +44,8 @@ dot-agent は、Claude Code をオーケストレーター、Codex / Antigravity
 - 検証していない変更をコミットする
 - intent.md に書かれていない変更を diff に混ぜる(発見したら分割する)
 - テストを弱める修正(skip・アサーション緩和・無断モック化・環境の書き換え)で通す
+- 秘密情報(.env・鍵・トークン・顧客データ)を読む・コミットする・成果物や
+  委譲プロンプトに貼る(検証で必要な場合も値そのものは伏せる)
 
 ## 参照ドキュメント(該当作業時に読む)
 
@@ -49,6 +53,7 @@ dot-agent は、Claude Code をオーケストレーター、Codex / Antigravity
 |---|---|
 | bolt を開始・再開するとき | [.claude/skills/bolt/SKILL.md](.claude/skills/bolt/SKILL.md) |
 | プロセス全体・フェーズ判定を知りたいとき | [docs/process/lifecycle.md](docs/process/lifecycle.md) |
+| 案件の性質に合わせてワークフローを選ぶとき | [docs/process/workflows.md](docs/process/workflows.md) |
 | 委譲・CLI 使い分けを判断するとき | [.claude/skills/cli-routing/SKILL.md](.claude/skills/cli-routing/SKILL.md) |
 | ブランチ・コミット・merge のとき | [docs/process/git.md](docs/process/git.md) |
 | テストループを回すとき | [docs/process/test.md](docs/process/test.md) |

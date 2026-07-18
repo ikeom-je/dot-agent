@@ -3,18 +3,17 @@ name: cli-routing
 description: タスクを Claude Code / Codex / Antigravity のどれで実行するか判断するとき、または subagent への委譲を検討するときに使う。委譲の損益分岐と委譲時の必須手順を定める。
 ---
 
-# cli-routing — 3つのエージェントCLIの使い分け
+# cli-routing — エージェントCLIの使い分け
 
-Claude Code が指揮者(オーケストレーター)、Codex と Antigravity(Gemini)が奏者。
+Claude Code が指揮者(オーケストレーター)、それ以外が奏者。
 委譲は目的ではなくコスト・品質の最適化手段。**迷ったら自分(Claude)でやる。**
 
-## 判断表
+## 担当の決め方
 
-| エージェント | 得意領域 | 使う場面 |
-|---|---|---|
-| **Claude Code** | オーケストレーション・判断・検証・難所の実装 | 常時。要件の解釈、設計判断、レビューの最終採否、グリーン判定、複雑で判断の多い実装 |
-| **Codex** | 仕様が固まった独立実装・セカンドオピニオン | spec/plan が書面化済みの実装単位の委譲(codex-worker subagent)、Claude が書いたコードのクロスレビュー |
-| **Antigravity** | バルク生成・移行・Web検索・長文コンテキストの要約 | 損益分岐を超える反復作業(大量scaffold・テスト網羅生成・機械的migration)、live Web検索、長文を読ませてダイジェストだけ受け取る |
+1. タスクの**能力領域**を特定する(実装/バルク/調査/マルチモーダル/レビュー…)。
+2. [AGENTS.md のエージェント編成表](../../../AGENTS.md) でその領域の「担当」を引く
+   (担当の定義はあの表が唯一。ここには書かない)。
+3. 下の損益分岐を超えるときだけ委譲する。超えないなら領域に関わらず自分でやる。
 
 ## 委譲の損益分岐
 
@@ -41,23 +40,31 @@ Claude Code が指揮者(オーケストレーター)、Codex と Antigravity(Ge
 
 - 試行は**ひとつの委譲先につき合計 `max_delegation_retries` 回まで**
   (ティア変更・プロンプト言い換えによる再試行も1回と数える)。
-- 上限に達したらその委譲先を諦め、下表の代替経路を**左から順に**試す。
+- 上限に達したらその委譲先を諦め、**編成表(AGENTS.md)の「代替」列を左から順に**試す。
   代替経路も同じ上限で数える(失敗し続ける委譲先へのリトライ連打をしない)。
-- 最後の代替(自分で実施)まで失敗したら、bolt の該当タスクを中断して
-  `escalation_to` に報告する。
-
-| 失敗した委譲先 | 代替経路(上から順に) |
-|---|---|
-| Antigravity(検索・調査) | WebSearch を自分で実行 / ux-researcher subagent |
-| Antigravity(生成・移行) | codex-worker / 自分で実装 |
-| Codex(実装・レビュー) | Antigravity / cross-reviewer subagent / 自分で実施 |
+- 最後の代替まで失敗したら、bolt の該当タスクを中断して `escalation_to` に報告する。
 
 フォールバックしたこと・理由は verification.md(上流boltは intent.md 末尾)に1行残す。
 
-## 呼び出し方
+## 編成の変更手順(モデルの強み・得意領域が変わったとき)
 
-- **Codex へ**: `codex-worker` subagent([.claude/agents/codex-worker.md](../../agents/codex-worker.md))を使う。
-- **Antigravity へ**: `antigravity:delegate` スキル(または antigravity-delegate subagent)を使う。
+適用対象は**運用開始後の担当差し替え・領域追加**(テンプレート導入時の初期記入は対象外。
+初期記入は README の導入手順に従い編成表を直接編集してよい)。
+
+1. AGENTS.md のエージェント編成表の「担当」「代替」列を書き換える(領域の行が無ければ追加)。
+2. 下の「呼び出し方」対応に、新担当への呼び出し手段があるか確認する。無ければ
+   subagent 定義(`.claude/agents/`)や利用プラグインを追加・調整する。
+3. 変更理由(どのモデルのどの強みを根拠にしたか)を ADR
+   ([docs/design/templates/adr.md](../../../docs/design/templates/adr.md))として1枚残す。
+4. 変更自体を bolt として回し、次の実案件1件で新担当の品質を検証してから恒久化する。
+
+## 呼び出し方(エージェント→手段の対応)
+
+- **Codex へ**: `codex-worker` subagent([.claude/agents/codex-worker.md](../../agents/codex-worker.md))、
+  またはレビューなら mcp__codex__codex(read-only)。
+- **Antigravity へ**: `antigravity:delegate` スキル(または antigravity-delegate subagent)。
   Web調査は `antigravity:research`、クロスレビューは `antigravity:review`。
+  マルチモーダル(画像生成・検出/比較・スライド生成)も同経路で委譲し、
+  成果物(画像・スライド)は指揮者が実物を開いて検証する。
 - **クロスレビュー**: `cross-reviewer` subagent。運用ルールは
   [docs/process/review.md](../../../docs/process/review.md)。

@@ -15,8 +15,8 @@ bolt の work ディレクトリに `ux-research.md` としてコピーして書
    検証すべき仮説を番号付きで抜き出す。仮説の無い調査は始めない。
 2. **調査方法を選ぶ** — デスクリサーチ/競合調査/インタビューから、仮説ごとに最小の方法を選ぶ。
 3. **調査を実行する**:
-   - **Web検索・競合調査は Antigravity に委譲する**(live 検索は Claude 単体より
-     Antigravity が得意。`cli-routing` スキル参照、呼び出しは `antigravity:research`
+   - **Web検索・競合調査は、編成表(AGENTS.md)の「Web検索・調査」領域の担当に委譲する**
+     (既定編成では Antigravity。`cli-routing` スキル参照、呼び出しは `antigravity:research`
      または `ux-researcher` subagent)。結果はダイジェストで受け、出典 URL を必ず添えさせる。
    - インタビューは人間が行う。ここでは設問設計とリクルート条件の定義までを支援する。
 4. **発見とインサイトを分けて書く** — ファクト(出典付き)とその解釈を混ぜない。

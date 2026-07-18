@@ -17,6 +17,8 @@ Claude Code を**指揮者**、Codex / Antigravity(Gemini)を**奏者**として
 1. このリポジトリを新規プロジェクトにコピー(または clone して `.git` を作り直す)。
 2. [AGENTS.md](AGENTS.md) 末尾の「プロジェクト固有」セクションに、プロダクト概要・技術スタック・
    ビルド/テストコマンドを記入する(テストコマンドはグリーン判定の正式コマンドになる)。
+   使うモデルの得意領域に合わせて「エージェント編成表」の担当・代替も見直す
+   (例: マルチモーダル生成が強いモデルに画像・スライド系の領域を割り当てる)。
 3. `.codex/config.toml` のモデル指定など、CLI 設定を環境に合わせて調整する。
 4. 案件の性質に合わせて [docs/process/workflows.md](docs/process/workflows.md) から
    ワークフロープロファイル(design-first / mvp-sprint / pitch-deck 等)を選ぶ。
@@ -27,7 +29,7 @@ Claude Code を**指揮者**、Codex / Antigravity(Gemini)を**奏者**として
 
 | パス | 役割 |
 |---|---|
-| `AGENTS.md` | ★単一ソースの常時コンテキスト(原則・禁止事項・参照リンク集) |
+| `AGENTS.md` | ★単一ソースの常時コンテキスト(原則・エージェント編成表・収束パラメータ・禁止事項) |
 | `CLAUDE.md` | AGENTS.md を import + Claude=オーケストレーター宣言 |
 | `GEMINI.md` | AGENTS.md 参照 + Gemini/Antigravity=worker 宣言 |
 | `.claude/skills/bolt/` | 1サイクルの進行役(開始→フェーズ判定→収束チェック) |
@@ -63,7 +65,7 @@ claude > (boltスキル) ブランチ bolt/YYYY-MM-DD-<topic> を作成、
          docs/work/YYYY-MM-DD-<topic>/intent.md を一緒に記入
 claude > (prfaqスキル) 顧客課題→プレスリリース→FAQ の順に prfaq.md を作成
 claude > 内部FAQで答えられなかった仮説を ux-research スキルへ。
-         Web調査は Antigravity に委譲し、出典付きダイジェストで受領
+         Web調査は編成表の担当(既定: Antigravity)に委譲し、出典付きダイジェストで受領
 claude > 仮説判定が出たら user-story スキルでペルソナとMVPスライスを作り、
          ux-design スキルで画面フロー・情報設計に落とす
 claude > その上で spec.md(要件)へ。実装 bolt は別途分割して起票

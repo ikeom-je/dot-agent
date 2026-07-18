@@ -29,7 +29,7 @@
 
 | 成果物を作った主体 | レビュアー |
 |---|---|
-| Claude(オーケストレーター自身) | Codex または Antigravity(cross-reviewer subagent / antigravity:review) |
+| Claude(オーケストレーター自身) | **Codex(第一候補)**。Codex 不能時は Antigravity(antigravity:review)→ cross-reviewer subagent |
 | Codex(codex-worker 経由) | Claude 自身がレビュー。大きい diff なら Antigravity で一次レビュー後に Claude |
 | Antigravity | Claude 自身がレビュー(必須。Antigravity の出力は必ず Claude が検証する) |
 

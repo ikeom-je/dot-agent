@@ -27,6 +27,8 @@ dot-agent は、Claude Code をオーケストレーター、Codex / Antigravity
 能力領域ごとの担当エージェントはここだけで定義する。他の doc・スキルは領域名で参照する。
 モデルの強さ・得意領域が変わったら、この表の「担当」「代替」列を書き換える
 (書き換えたら [cli-routing の編成変更手順](.claude/skills/cli-routing/SKILL.md) を実施)。
+担当割りの見直し案は [roster-review スキル](.claude/skills/roster-review/SKILL.md)
+(3モデルの合議→人間が判断)で作る。
 
 **指揮者(オーケストレーター)は Claude Code 固定**。判断・検証・グリーン判定・
 レビュー最終採否は委譲しない。これはこのフレームワークの収束構造(subagent の自己申告を
@@ -75,6 +77,7 @@ intent.md に明記された場合のみ許す(明記があれば、その bolt 
 | プロセス全体・フェーズ判定を知りたいとき | [docs/process/lifecycle.md](docs/process/lifecycle.md) |
 | 案件の性質に合わせてワークフローを選ぶとき | [docs/process/workflows.md](docs/process/workflows.md) |
 | 委譲・CLI 使い分けを判断するとき | [.claude/skills/cli-routing/SKILL.md](.claude/skills/cli-routing/SKILL.md) |
+| エージェント編成の見直し案を作るとき | [.claude/skills/roster-review/SKILL.md](.claude/skills/roster-review/SKILL.md) |
 | ブランチ・コミット・merge のとき | [docs/process/git.md](docs/process/git.md) |
 | テストループを回すとき | [docs/process/test.md](docs/process/test.md) |
 | レビューを依頼・実施するとき | [docs/process/review.md](docs/process/review.md)(運用ルール)+ [.claude/skills/cross-review/SKILL.md](.claude/skills/cross-review/SKILL.md)(実行手順) |

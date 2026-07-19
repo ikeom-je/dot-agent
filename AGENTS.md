@@ -101,6 +101,8 @@ intent.md に明記された場合のみ許す(明記があれば、その bolt 
 - テストを弱める修正(skip・アサーション緩和・無断モック化・環境の書き換え)で通す
 - 秘密情報(.env・鍵・トークン・顧客データ)を読む・コミットする・成果物や
   委譲プロンプトに貼る(検証で必要な場合も値そのものは伏せる)
+- 外部スキル・エージェント定義を、検査(skill-scanner)と人間の承認なしに導入する
+  (手順は [skill-install スキル](.claude/skills/skill-install/SKILL.md))
 
 ## 参照ドキュメント(該当作業時に読む)
 
@@ -111,6 +113,7 @@ intent.md に明記された場合のみ許す(明記があれば、その bolt 
 | 案件の性質に合わせてワークフローを選ぶとき | [docs/process/workflows.md](docs/process/workflows.md) |
 | 委譲・CLI 使い分けを判断するとき | [.claude/skills/cli-routing/SKILL.md](.claude/skills/cli-routing/SKILL.md) |
 | エージェント編成の見直し案を作るとき | [.claude/skills/roster-review/SKILL.md](.claude/skills/roster-review/SKILL.md) |
+| 外部スキルを探す・導入するとき | [.claude/skills/skill-install/SKILL.md](.claude/skills/skill-install/SKILL.md) |
 | ブランチ・コミット・merge のとき | [docs/process/git.md](docs/process/git.md) |
 | リリース(タグ・リリースノート・GO判定)のとき | [docs/process/release.md](docs/process/release.md) |
 | テストループを回すとき | [docs/process/test.md](docs/process/test.md) |

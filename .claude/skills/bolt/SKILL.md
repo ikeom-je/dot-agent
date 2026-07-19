@@ -52,8 +52,11 @@ bolt は「1トピックを `bolt_max_size` の範囲で収束させる」作業
 
 ## 完了チェックリスト(収束)
 
-- [ ] テストグリーンを自分で実行して確認した(subagent の申告ではなく)
+- [ ] テストグリーンを自分で実行して確認した(subagent の申告ではなく。
+      ドキュメントのみの bolt では正式グリーン判定コマンドの実行)
 - [ ] クロスモデルレビューが収束した([docs/process/review.md](../../../docs/process/review.md))
 - [ ] `verification.md` に検証記録・レビュー採否・未解決事項を書いた
+      (実装に入らない上流 bolt は、代わりに intent.md 末尾の引き継ぎメモでよい —
+      [lifecycle.md](../../../docs/process/lifecycle.md) の収束規定)
 - [ ] squash merge して bolt ブランチを削除した
 - [ ] 続きのトピックがあれば新しい bolt の intent として起票した(このboltを膨らませない)

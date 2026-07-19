@@ -1,8 +1,20 @@
 # dot-agent
 
-マルチエージェント開発のテンプレートフレームワーク。
-Claude Code を**指揮者**、Codex / Antigravity(Gemini)を**奏者**として、
-企画(PRFAQ・UX調査)から設計・実装・テストまでを **bolt** という小さなサイクルで回し続ける。
+マルチエージェント開発のテンプレートフレームワーク(MIT License)。
+指揮者(既定: Claude Code)と奏者(既定: Codex / Antigravity(Gemini))が、
+企画(PRFAQ・UX調査)から設計・実装・テスト・リリースまでを **bolt** という
+小さなサイクルで回し続ける。
+
+## 前提ツール
+
+- **必須はエージェントCLIどれか1つ**(既定編成なら Claude Code)。
+- 委譲先(Codex の MCP 連携、Antigravity プラグイン等)は**無くても始められる**:
+  エージェント編成表(AGENTS.md)の「代替」列に従い、検索は指揮者自身の WebSearch、
+  実装は指揮者が自分で行う。レビューは cross-reviewer subagent(別コンテキスト)で行い、
+  同モデルレビューになる旨を記録する(review.md のフォールバック規定)。委譲先を後から足すときは
+  [cli-routing の呼び出し方](.claude/skills/cli-routing/SKILL.md)(ヘッドレスCLIの
+  汎用経路を含む)と [skill-install](.claude/skills/skill-install/SKILL.md)(外部スキルの
+  安全な導入)を参照。
 
 ## 思想(3行)
 
@@ -35,7 +47,7 @@ Claude Code を**指揮者**、Codex / Antigravity(Gemini)を**奏者**として
 | `.claude/skills/bolt/` | 1サイクルの進行役(開始→フェーズ判定→収束チェック) |
 | `.claude/skills/cli-routing/` | CLI 使い分けの判断表・委譲の損益分岐・失敗時フォールバック |
 | `.claude/skills/cross-review/` | クロスモデルレビューの実行手順(依頼の型・往復プロトコル・採否記録) |
-| `tools/` | check-links.sh: リンク検証(このリポジトリの正式グリーン判定) |
+| `tools/` | check-links.sh: リンク検証(このリポジトリの正式グリーン判定。既知の制限: コードブロック内のリンク記法も検査対象のため、実在しない例をリンク記法で書かない) |
 | `.claude/skills/prfaq/` `.claude/skills/ux-research/` | 上流フェーズのスキル(企画・調査) |
 | `.claude/skills/user-story/` `.claude/skills/ux-design/` | UXフェーズのスキル(ストーリー・体験設計) |
 | `.claude/agents/` | codex-worker / ux-researcher / cross-reviewer subagent |

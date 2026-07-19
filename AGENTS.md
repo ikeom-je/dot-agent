@@ -88,7 +88,7 @@ intent.md に明記された場合のみ許す(明記があれば、その bolt 
 |---|---|---|---|
 | `max_fix_loops` | 3 | 同一原因のテスト修正ループの上限([test.md](docs/process/test.md)) | 未知領域・実験的な実装なら 4〜5、枯れた定型実装なら 2 |
 | `max_review_rounds` | 2 | 成果物1つあたりの相互レビュー往復の上限。全フェーズ共通([review.md](docs/process/review.md)) | 品質重視(公開API・課金まわり)なら 3、社内ツール・試作なら 1 |
-| `review_gate_phases` | all | 相互レビューを必須にするフェーズ。`all` = 全成果物 | 試作フェーズのプロジェクトは `spec以降` や `コードのみ` に緩めてよい |
+| `review_gate_phases` | all | 相互レビューを必須にする、**成果物を生むフェーズ**([lifecycle.md](docs/process/lifecycle.md) の番号で解釈。9=レビュー実施・10=収束は対象外): `all`=1〜8の全成果物 / `spec以降`=6〜8(spec・plan・コード)/ `コードのみ`=8 | 試作フェーズのプロジェクトは `spec以降` や `コードのみ` に緩めてよい |
 | `max_phase_bounce` | 2 | 隣接フェーズ間の往復(UX調査↔ユーザーストーリー等)の上限([lifecycle.md](docs/process/lifecycle.md)) | 探索が深いテーマなら 3、定型的な機能追加なら 1 |
 | `max_delegation_retries` | 3 | 委譲先1つあたりの合計試行回数の上限(初回を含む。空応答・エラー時)。超えたら代替経路へ([cli-routing](.claude/skills/cli-routing/SKILL.md)) | 委譲先が不安定な環境では 2 に下げて早く切り替える |
 | `bolt_max_size` | 1セッション | 1 bolt の上限サイズ。超える見込みなら分割 | 大規模移行など分割不能な作業のみ 2〜3 セッションに緩める |
@@ -144,3 +144,5 @@ intent.md に明記された場合のみ許す(明記があれば、その bolt 
 
 - ドキュメント検証(このリポジトリの正式グリーン判定):
   `./tools/check-links.sh && ./tools/test-check-links.sh`
+- このリポジトリ自身の bolt 記録は、merge 後に `docs/work/` から `docs/examples/` へ移す
+  (テンプレート利用者の作業場を汚さない。examples は導入時に削除可)

@@ -20,6 +20,8 @@ docs/work/2026-07-06-example-topic/
 ```markdown
 # intent: <topic>
 
+プロファイル: standard(docs/process/workflows.md から選ぶ)
+
 - 解きたい課題:(1〜3行。誰が何に困っているか)
 - この bolt でやること:(スコープ。1トピックに絞る)
 - やらないこと:

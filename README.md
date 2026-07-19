@@ -39,7 +39,7 @@ Claude Code を**指揮者**、Codex / Antigravity(Gemini)を**奏者**として
 | `.claude/skills/prfaq/` `.claude/skills/ux-research/` | 上流フェーズのスキル(企画・調査) |
 | `.claude/skills/user-story/` `.claude/skills/ux-design/` | UXフェーズのスキル(ストーリー・体験設計) |
 | `.claude/agents/` | codex-worker / ux-researcher / cross-reviewer subagent |
-| `docs/process/` | lifecycle / git / test / review / workflows(ユースケース別プロファイル)のプロセスと収束ルール |
+| `docs/process/` | lifecycle / git / test / review / release / workflows(ユースケース別プロファイル)のプロセスと収束ルール |
 | `docs/product/templates/` | PRFAQ / UX調査 / ユーザーストーリー / UX設計 / Lean Canvas / ピッチ資料 テンプレート |
 | `docs/design/templates/` | design-doc / ADR テンプレート |
 | `docs/work/` | bolt 成果物置き場(1 bolt = 1 ディレクトリ) |

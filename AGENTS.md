@@ -86,6 +86,7 @@ intent.md に明記された場合のみ許す(明記があれば、その bolt 
 | 委譲・CLI 使い分けを判断するとき | [.claude/skills/cli-routing/SKILL.md](.claude/skills/cli-routing/SKILL.md) |
 | エージェント編成の見直し案を作るとき | [.claude/skills/roster-review/SKILL.md](.claude/skills/roster-review/SKILL.md) |
 | ブランチ・コミット・merge のとき | [docs/process/git.md](docs/process/git.md) |
+| リリース(タグ・リリースノート・GO判定)のとき | [docs/process/release.md](docs/process/release.md) |
 | テストループを回すとき | [docs/process/test.md](docs/process/test.md) |
 | レビューを依頼・実施するとき | [docs/process/review.md](docs/process/review.md)(運用ルール)+ [.claude/skills/cross-review/SKILL.md](.claude/skills/cross-review/SKILL.md)(実行手順) |
 | PRFAQ を書くとき | [.claude/skills/prfaq/SKILL.md](.claude/skills/prfaq/SKILL.md) |
@@ -106,6 +107,9 @@ intent.md に明記された場合のみ許す(明記があれば、その bolt 
 - ビルド: `<command>`
 - テスト: `<command>`(グリーン判定に使う正式コマンド)
 - lint/format: `<command>`
+- バージョニング: SemVer | 日付タグ(release.md 参照)
+- リリース固有手順: `<デプロイ/公開のコマンドや手順へのリンク>`
+- リリースノートの対象読者: エンドユーザー | 開発者 | 社内
 -->
 
 - ドキュメント検証(このリポジトリの正式グリーン判定):

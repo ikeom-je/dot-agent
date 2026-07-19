@@ -112,6 +112,7 @@ intent.md に明記された場合のみ許す(明記があれば、その bolt 
 | プロセス全体・フェーズ判定を知りたいとき | [docs/process/lifecycle.md](docs/process/lifecycle.md) |
 | 案件の性質に合わせてワークフローを選ぶとき | [docs/process/workflows.md](docs/process/workflows.md) |
 | 委譲・CLI 使い分けを判断するとき | [.claude/skills/cli-routing/SKILL.md](.claude/skills/cli-routing/SKILL.md) |
+| 各CLIのベストプラクティスを実践するとき | [docs/process/cli-best-practices.md](docs/process/cli-best-practices.md) |
 | エージェント編成の見直し案を作るとき | [.claude/skills/roster-review/SKILL.md](.claude/skills/roster-review/SKILL.md) |
 | 外部スキルを探す・導入するとき | [.claude/skills/skill-install/SKILL.md](.claude/skills/skill-install/SKILL.md) |
 | ブランチ・コミット・merge のとき | [docs/process/git.md](docs/process/git.md) |

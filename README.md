@@ -34,7 +34,8 @@
 3. `.codex/config.toml` のモデル指定など、CLI 設定を環境に合わせて調整する。
 4. 案件の性質に合わせて [docs/process/workflows.md](docs/process/workflows.md) から
    ワークフロープロファイル(design-first / mvp-sprint / pitch-deck 等)を選ぶ。
-5. 不要なら [docs/examples/](docs/examples/)(このリポジトリで実際に回した bolt の記録)を削除する。
+5. [docs/knowledge/insights.md](docs/knowledge/insights.md)(このリポジトリでの運用知見)を
+   一読し、不要な項目は削除して自プロジェクトの知見置き場として使う。
 6. `claude` を起動し、「◯◯の bolt を始めたい」と伝える(`bolt` スキルが進行を導く)。
 
 ## 全体マップ
@@ -54,8 +55,8 @@
 | `docs/process/` | lifecycle / git / test / review / release / workflows(ユースケース別プロファイル)のプロセスと収束ルール |
 | `docs/product/templates/` | PRFAQ / UX調査 / ユーザーストーリー / UX設計 / Lean Canvas / ピッチ資料 テンプレート |
 | `docs/design/templates/` | design-doc / ADR テンプレート |
-| `docs/work/` | bolt 成果物置き場(1 bolt = 1 ディレクトリ) |
-| `docs/examples/` | 実例(導入時に削除可) |
+| `docs/work/` | bolt の一時作業場(1 bolt = 1 ディレクトリ。merge 時に削除) |
+| `docs/knowledge/` | 知見の永続化(忘却防止の dump 先。insights.md が正) |
 | `.gitignore` | 秘密情報・OS/エディタゴミ・生成物の混入防御 |
 
 ## 設定ファイルの方針
@@ -73,18 +74,17 @@
 
 ```
 you    > 「<あなたのサービス案>」を企画したい。boltを始めて。
-claude > (boltスキル) ブランチ bolt/YYYY-MM-DD-<topic> を作成、
-         docs/work/YYYY-MM-DD-<topic>/intent.md を一緒に記入
+claude > (boltスキル) issue を作成し、worktree でブランチ bolt/<issue番号>-<topic> を
+         作成、docs/work/<topic>/intent.md を一緒に記入
 claude > (prfaqスキル) 顧客課題→プレスリリース→FAQ の順に prfaq.md を作成
 claude > 内部FAQで答えられなかった仮説を ux-research スキルへ。
          Web調査は編成表の担当(既定: Antigravity)に委譲し、出典付きダイジェストで受領
 claude > 仮説判定が出たら user-story スキルでペルソナとMVPスライスを作り、
          ux-design スキルで画面フロー・情報設計に落とす
 claude > その上で spec.md(要件)へ。実装 bolt は別途分割して起票
-claude > verification.md に記録を書き、squash merge してブランチ削除 → bolt 収束
+claude > 検証記録を PR 本文に書き、知見を docs/knowledge/ に dump、work を片付けて
+         squash merge(issue 自動クローズ)→ bolt 収束
 ```
-
-実際に回した bolt の記録は [docs/examples/](docs/examples/) にある(導入時は削除してよい)。
 
 実装 bolt でも流れは同じで、フェーズ 7〜9(設計→実装→テスト)では
 [docs/process/test.md](docs/process/test.md) の収束条件と
@@ -92,7 +92,5 @@ claude > verification.md に記録を書き、squash merge してブランチ削
 
 ## このリポジトリ自体の開発
 
-このフレームワーク自体の設計経緯は
-[docs/superpowers/specs/](docs/superpowers/specs/) と
-[docs/superpowers/plans/](docs/superpowers/plans/) にある。
-フレームワーク自体の変更も bolt として回す(ドッグフーディング)。
+フレームワーク自体の変更も bolt として回す(ドッグフーディング)。経緯は git 履歴と
+issue / PR に、運用知見は [docs/knowledge/insights.md](docs/knowledge/insights.md) にある。

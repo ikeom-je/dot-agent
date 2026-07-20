@@ -1,19 +1,24 @@
-# docs/work/ — bolt 成果物置き場
+# docs/work/ — bolt の一時作業場
 
-1 bolt = 1 ディレクトリ。命名は `YYYY-MM-DD-<topic>`(ブランチ名 `bolt/YYYY-MM-DD-<topic>` と揃える)。
-プロセス全体は [docs/process/lifecycle.md](../process/lifecycle.md) を参照。
+1 bolt = 1 ディレクトリ。命名は `<topic>`(日付は使わない。ブランチは
+`bolt/<issue番号>-<topic>`)。プロセス全体は [docs/process/lifecycle.md](../process/lifecycle.md)。
+
+**ここは一時作業場であり、bolt を閉じるとき削除して merge する**([git.md](../process/git.md))。
+intent の骨子は issue に、検証記録は PR に、知見は [docs/knowledge/](../knowledge/README.md) に、
+恒久成果物(design-doc / ADR 等)は docs/design/ 等に残るのが正。
 
 ```
-docs/work/2026-07-06-example-topic/
+docs/work/<topic>/
 ├── intent.md         # 必須。bolt の目的
 ├── prfaq.md          # 上流bolt。テンプレート: ../product/templates/prfaq.md
 ├── ux-research.md    # 上流bolt。テンプレート: ../product/templates/ux-research.md
 ├── user-story.md     # UXを含むbolt。テンプレート: ../product/templates/user-story.md
 ├── ux-design.md      # UIのあるプロダクト。テンプレート: ../product/templates/ux-design.md
 ├── spec.md           # 要件
-├── plan.md           # 設計・タスク分解
-└── verification.md   # 収束の証跡
+└── plan.md           # 設計・タスク分解
 ```
+
+収束の証跡(検証記録)はファイルではなく PR 本文に書く(下のテンプレート)。
 
 ## intent.md ミニテンプレート
 
@@ -48,13 +53,14 @@ docs/work/2026-07-06-example-topic/
 - [ ] Task 1: ...
 ```
 
-## verification.md ミニテンプレート
+## 検証記録(PR 本文)ミニテンプレート
 
 ```markdown
-# verification: <topic>
+Closes #<issue番号>
 
+## 検証記録
 - 実行した検証コマンドと結果:
 - レビュー往復の記録(指摘・採否と理由):
+- knowledge dump:(insights.md への追記 or「なし」)
 - エスカレーション/未解決事項:(あれば)
-- merge日時・コミット:
 ```

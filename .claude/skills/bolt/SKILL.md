@@ -15,10 +15,16 @@ bolt は「1トピックを `bolt_max_size` の範囲で収束させる」作業
 2. **プロファイル選択** — 案件の性質(設計重視/MVP速度/スライド共有など)に合わせて
    [docs/process/workflows.md](../../../docs/process/workflows.md) からプロファイルを選び、
    **standard を含めて** intent.md に「プロファイル: <名前>」と1行書く。
-3. **ブランチ作成** — `git checkout -b bolt/YYYY-MM-DD-<topic>`
-4. **work ディレクトリ作成** — `docs/work/YYYY-MM-DD-<topic>/` を作り、`intent.md` を記入する
-   (テンプレート: [docs/work/README.md](../../../docs/work/README.md))。
-   intent は3行でもよいが、「やらないこと」と「完了の定義」は必ず書く。
+3. **issue 作成** — リモートがある場合、intent の骨子(課題・やること・完了の定義)で
+   issue を作る(`gh issue create`)。既存 issue があれば紐付ける。
+4. **ブランチ+worktree 作成** —
+   `git worktree add ../<repo>-wt-issue-<番号> -b bolt/<issue番号>-<topic>`
+   (issue の無いローカル運用は `bolt/<topic>`。日付は使わない —
+   [git.md](../../../docs/process/git.md))。
+5. **work ディレクトリ作成** — `docs/work/<topic>/` を作り、`intent.md` を記入する
+   (テンプレート: [docs/work/README.md](../../../docs/work/README.md)、
+   issue があれば `Issue: #<番号>` を1行)。intent は3行でもよいが、「やらないこと」と
+   「完了の定義」は必ず書く。
 
 ## フェーズ判定と進行
 
@@ -42,8 +48,12 @@ bolt は「1トピックを `bolt_max_size` の範囲で収束させる」作業
 - [ ] テストグリーンを自分で実行して確認した(subagent の申告ではなく。
       ドキュメントのみの bolt では正式グリーン判定コマンドの実行)
 - [ ] クロスモデルレビューが収束した([docs/process/review.md](../../../docs/process/review.md))
-- [ ] `verification.md` に検証記録・レビュー採否・未解決事項を書いた
-      (実装に入らない上流 bolt は、代わりに intent.md 末尾の引き継ぎメモでよい —
-      [lifecycle.md](../../../docs/process/lifecycle.md) の収束規定)
-- [ ] squash merge して bolt ブランチを削除した
-- [ ] 続きのトピックがあれば新しい bolt の intent として起票した(このboltを膨らませない)
+- [ ] 検証記録(何をどう確認したか・レビュー採否・未解決事項)を PR 本文に書いた
+      (ローカル運用では merge コミット本文)
+- [ ] knowledge dump をした([docs/knowledge/](../../../docs/knowledge/README.md)。
+      知見が無ければ PR 本文に「なし」と1行)
+- [ ] `docs/work/<topic>/` を削除した(恒久成果物は docs/design/ 等へ移してから —
+      [git.md](../../../docs/process/git.md) マージ収束ルール)
+- [ ] PR を squash merge し(`Closes #<番号>` で issue クローズ)、ブランチと worktree を
+      削除した
+- [ ] 続きのトピックがあれば新しい issue として起票した(このboltを膨らませない)

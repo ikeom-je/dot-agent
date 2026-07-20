@@ -33,10 +33,8 @@ bolt の work ディレクトリに `prfaq.md` としてコピーして書く。
 
 ## 相互レビュー(収束ゲート)
 
-`review_gate_phases` がこのフェーズを対象とする場合、セルフチェック後に
-[docs/process/review.md](../../../docs/process/review.md) に従い別モデル
-(cross-reviewer subagent または antigravity:review)にレビューさせる。
-往復は `max_review_rounds` まで。レビュー収束をもってフェーズ完了。
+セルフチェック後、ミニループの相互レビュー(`review_gate_phases` の対象フェーズの場合。[review.md](../../../docs/process/review.md)、
+手順は cross-review スキル)を収束させてフェーズ完了。
 
 ## 完了後の導線
 

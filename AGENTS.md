@@ -1,148 +1,97 @@
 # AGENTS.md — 全エージェント共通コンテキスト(単一ソース)
 
-このファイルが唯一の常時コンテキスト。CLAUDE.md / GEMINI.md はここへの参照+役割宣言のみを持つ。
-プロジェクト固有の情報(技術スタック、ビルド/テストコマンド等)は、このファイル末尾の
-「プロジェクト固有」セクションに追記する。
+このファイルが唯一の常時コンテキスト。CLAUDE.md / GEMINI.md は参照+既定役割の宣言のみ。
+プロジェクト固有情報は末尾の「プロジェクト固有」に書く。
 
-## このリポジトリ / フレームワーク
+dot-agent は、指揮者(オーケストレーター)と奏者(worker)が、企画から設計・実装・
+テスト・リリースまでを **bolt** という小さなサイクルで回すテンプレートフレームワーク。
 
-dot-agent は、指揮者(オーケストレーター。既定: Claude Code)と奏者(worker。既定:
-Codex / Antigravity(Gemini))が、企画(PRFAQ・UX調査)から設計・実装・テスト・リリース
-までを **bolt** という小さなサイクルで回すためのテンプレートフレームワーク。
-どのCLIがどの役割を担うかは下のエージェント編成表で定義する。
+## 原則(常時前提)
 
-## 常時前提とする原則
-
-1. **bolt 原則** — 作業は必ず bolt(1トピック・1ブランチ・1 work ディレクトリ)として行う。
+1. **bolt 原則** — 作業は必ず bolt(1トピック・1ブランチ・1 work ディレクトリ)。
    フェーズを飛ばさない。大きければ分割する。
-2. **ミニループ原則** — どのフェーズの成果物(intent / PRFAQ / UX調査 / ユーザーストーリー /
-   UX設計 / spec / plan / コード)も、
-   「計画→作成→検証→相互レビュー→収束」の同じ小ループで作る。ループ回数は下の
-   収束パラメータで打ち切り、超えたら記録して人間にエスカレーション。
-   グリーン判定はオーケストレーターが自ら実行して行う。
-3. **ルーティング** — 委譲は損益分岐で判断する(基準は cli-routing スキル)。
-   能力領域ごとの担当は下の**エージェント編成表**に従う。
-4. **表現の原則** — 何をどこに書くかを分離する:
-   **コードには How**(どう実現するか。コード自身が語る)/
-   **テストコードには What**(何を満たすべきか。仕様として読める名前とアサーション)/
-   **コミットログには Why**(なぜこの変更が必要か。What は diff が語る)/
-   **コードコメントには Why not**(なぜ別のやり方をしなかったか・自明でない制約のみ)。
-   この分離の違反(How を説明するコメント、What を列挙するだけのコミットログ、
-   実装の写しのテスト)はレビューで指摘する([review.md](docs/process/review.md))。
+2. **ミニループ原則** — どのフェーズの成果物も「計画→作成→検証→相互レビュー→収束」の
+   同じ小ループで作る。回数は収束パラメータで打ち切り、超えたら記録して `escalation_to` へ。
+   グリーン判定は指揮者が自ら実行する。
+3. **ルーティング原則** — 委譲は損益分岐で判断(cli-routing スキル)。担当は編成表に従う。
+4. **表現の原則** — コード=How / テストコード=What / コミットログ=Why /
+   コードコメント=Why not。違反はレビューで指摘する([review.md](docs/process/review.md))。
 
 ## エージェント編成(★単一の定義箇所)
 
-能力領域ごとの担当エージェントはここだけで定義する。他の doc・スキルは領域名で参照する。
-モデルの強さ・得意領域が変わったら、この表の「担当」「代替」列を書き換える
-(書き換えたら [cli-routing の編成変更手順](.claude/skills/cli-routing/SKILL.md) を実施)。
-担当割りの見直し案は [roster-review スキル](.claude/skills/roster-review/SKILL.md)
-(3モデルの合議→人間が判断)で作る。
+担当はこの表だけで定義し、他の doc は領域名で参照する。各エージェントは起動時に
+この表で自分の役割(指揮者/奏者)を特定して振る舞う(責務の詳細と、Claude Code 以外から
+スキル・エージェント定義を使う方法は [cli-routing](.claude/skills/cli-routing/SKILL.md))。
 
-**指揮者(オーケストレーター)の既定は Claude Code**。契約・環境の制約で使えない場合は
-他のCLI(Codex / Antigravity)に交代してよい(交代は [cli-routing の編成変更手順](.claude/skills/cli-routing/SKILL.md)
-に従い、実案件1件で検証してから恒久化)。ただし**役割としての指揮者の責務は不変**:
-判断・検証・グリーン判定・レビュー最終採否は、そのとき指揮者であるエージェントが担い、
-委譲しない。これはこのフレームワークの収束構造(subagent の自己申告を信じない・
-採否は指揮者が検証して決める)の前提であり、担当を組み替えられるのは領域であって責務ではない。
+**指揮者の責務(判断・検証・グリーン判定・レビュー最終採否)は委譲不可。**
+担い手の既定は Claude Code。契約・環境の制約時のみ交代可(編成変更手順+実案件1件で検証)。
+見直し案は [roster-review](.claude/skills/roster-review/SKILL.md) で作り、人間が決める。
 
-### 役割の特定(全CLI共通)
-
-各エージェントは起動時にこの編成表で**自分の役割(指揮者/奏者)を特定して**振る舞う。
-CLAUDE.md / GEMINI.md 等のコンテキストファイルは既定役割の宣言にすぎず、編成表が優先する。
-
-- **指揮者の責務**: bolt の進行(bolt スキル)、委譲判断(cli-routing)、グリーン判定を
-  自ら実行、レビューの採否判断、`escalation_to` への報告。
-- **奏者の責務**: 渡された書面(spec / plan / エージェント定義)の範囲でのみ作業。
-  結果はダイジェスト(変更ファイル一覧・要約・実行した検証と結果・未解決事項)で返す。
-  自己検証は参考情報であり、GREEN の断定報告をしない。
-
-### スキル・エージェント定義の互換性(全CLI共通)
-
-`.claude/skills/*/SKILL.md` と `.claude/agents/*.md` は、置き場所こそ `.claude/` 配下だが
-**内容は全CLI共通の Markdown 定義**である。Claude Code 以外のCLIが使う場合:
-
-- **スキル**: 自動発見されないので、参照ドキュメント表(下記)からパスを引き、
-  **ファイルを読んで手順に従う**。
-- **エージェント定義**: frontmatter の `tools:` は Claude Code 固有なので無視してよい。
-  **本文を役割指示(システムプロンプト相当)として対象CLIに渡して**起動する
-  (呼び出し手段は cli-routing の「呼び出し方」)。
-
-| 能力領域 | 担当 | 代替(フォールバック順) | 変更の目安 |
+| 能力領域 | 担当 | 代替(左から順に試す) | 変更の目安 |
 |---|---|---|---|
-| 指揮・判断・検証・レビュー最終採否 | 指揮者(既定: Claude Code) | なし(責務として委譲不可) | 担い手の交代は契約・環境の制約時のみ(編成変更手順+実案件検証)。責務自体は変更しない |
-| 判断の重い実装・難所の実装・小タスク | 指揮者(そのとき指揮者である CLI) | なし(損益分岐未満・判断が重いものは委譲しない) | 指揮者が自分でやる領域 |
+| 指揮・判断・検証・レビュー最終採否 | 指揮者(既定: Claude Code) | なし(委譲不可) | 責務は変更しない(担い手の交代のみ可) |
+| 判断の重い実装・難所・小タスク | 指揮者 | なし(委譲しない) | 変更しない |
 | 書面化済みの独立実装・テスト生成 | Codex | Antigravity → Claude | コーディングが得意なモデルが変わったら |
 | バルク生成・機械的 migration | Antigravity | Codex → Claude | 大量・反復に強い低コストモデルへ |
-| Web検索・調査・長文コンテキスト要約 | Antigravity | Claude 自身(WebSearch)→ ux-researcher subagent | live 検索を持つモデルへ |
-| マルチモーダル生成・比較チェック(画像生成・画像検出/比較・スライド生成。成果物の最終検証は指揮者) | Antigravity | Claude(可能な範囲で) | Gemini 系が強い傾向。モデル更新ごとに見直す |
-| クロスレビュー(一次) | 成果物の作成者と**別の**エージェント([review.md](docs/process/review.md)) | cross-reviewer subagent(同モデルになる旨を記録) | 別モデル原則自体は変えない |
+| Web検索・調査・長文要約 | Antigravity | Claude 自身(WebSearch)→ ux-researcher subagent | live 検索を持つモデルへ |
+| マルチモーダル生成・比較チェック(画像・スライド。最終検証は指揮者) | Antigravity | Claude(可能な範囲) | Gemini 系が強い傾向。モデル更新ごとに見直す |
+| クロスレビュー(一次) | 作成者と**別の**エージェント([review.md](docs/process/review.md)) | cross-reviewer subagent(同モデルの旨を記録) | 別モデル原則自体は変えない |
 
 ## 収束パラメータ(★単一の定義箇所)
 
-回数・サイズの数値はここだけで定義する。他の doc・スキルはパラメータ名で参照する。
-プロジェクトに合わせて調整するときは、この表の「値」列を直接編集する。
-bolt 単位の一時調整は、[workflows.md](docs/process/workflows.md) のプロファイルに従って
-intent.md に明記された場合のみ許す(明記があれば、その bolt 内ではそちらを使う)。
+数値はこの表だけで定義し、他の doc はパラメータ名で参照する。プロジェクト調整は「値」列を
+編集。bolt 単位の一時調整は、[workflows.md](docs/process/workflows.md) のプロファイルに
+従って intent.md に明記した場合のみ有効(任意の上書きは不可)。
 
 | パラメータ | 値 | 意味 | 調整の目安 |
 |---|---|---|---|
-| `max_fix_loops` | 3 | 同一原因のテスト修正ループの上限([test.md](docs/process/test.md)) | 未知領域・実験的な実装なら 4〜5、枯れた定型実装なら 2 |
-| `max_review_rounds` | 2 | 成果物1つあたりの相互レビュー往復の上限。全フェーズ共通([review.md](docs/process/review.md)) | 品質重視(公開API・課金まわり)なら 3、社内ツール・試作なら 1 |
-| `review_gate_phases` | all | 相互レビューを必須にする、**成果物を生むフェーズ**([lifecycle.md](docs/process/lifecycle.md) の番号で解釈。9=レビュー実施・10=収束は対象外): `all`=1〜8の全成果物 / `spec以降`=6〜8(spec・plan・コード)/ `コードのみ`=8 | 試作フェーズのプロジェクトは `spec以降` や `コードのみ` に緩めてよい |
-| `max_phase_bounce` | 2 | 隣接フェーズ間の往復(UX調査↔ユーザーストーリー等)の上限([lifecycle.md](docs/process/lifecycle.md)) | 探索が深いテーマなら 3、定型的な機能追加なら 1 |
-| `max_delegation_retries` | 3 | 委譲先1つあたりの合計試行回数の上限(初回を含む。空応答・エラー時)。超えたら代替経路へ([cli-routing](.claude/skills/cli-routing/SKILL.md)) | 委譲先が不安定な環境では 2 に下げて早く切り替える |
-| `bolt_max_size` | 1セッション | 1 bolt の上限サイズ。超える見込みなら分割 | 大規模移行など分割不能な作業のみ 2〜3 セッションに緩める |
-| `escalation_to` | 人間 | 打ち切り時のエスカレーション先 | チーム運用ではレビュー担当者名・チャンネル名を書く |
+| `max_fix_loops` | 3 | 同一原因のテスト修正ループ上限([test.md](docs/process/test.md)) | 実験的なら 4〜5、定型なら 2 |
+| `max_review_rounds` | 2 | 成果物1つあたりのレビュー往復上限([review.md](docs/process/review.md)) | 品質重視なら 3、試作なら 1 |
+| `review_gate_phases` | all | 相互レビュー必須の成果物フェーズ([lifecycle.md](docs/process/lifecycle.md) の番号): `all`=1〜8 / `spec以降`=6〜8 / `コードのみ`=8 | 試作は緩めてよい |
+| `max_phase_bounce` | 2 | 隣接フェーズ間の往復上限([lifecycle.md](docs/process/lifecycle.md)) | 探索的なら 3、定型なら 1 |
+| `max_delegation_retries` | 3 | 委譲先1つあたりの合計試行回数(初回含む)。超えたら代替へ([cli-routing](.claude/skills/cli-routing/SKILL.md)) | 不安定な委譲先なら 2 |
+| `bolt_max_size` | 1セッション | 1 bolt の上限サイズ。超える見込みなら分割 | 分割不能な作業のみ緩める |
+| `escalation_to` | 人間 | 打ち切り・GO判断のエスカレーション先 | チームでは担当者名を書く |
 
-### 全エージェント共通の禁止事項
+## 禁止事項(全エージェント共通)
 
 - 検証していない変更をコミットする
-- intent.md に書かれていない変更を diff に混ぜる(発見したら分割する)
+- intent.md に無い変更を diff に混ぜる(発見したら分割)
 - テストを弱める修正(skip・アサーション緩和・無断モック化・環境の書き換え)で通す
-- 秘密情報(.env・鍵・トークン・顧客データ)を読む・コミットする・成果物や
-  委譲プロンプトに貼る(検証で必要な場合も値そのものは伏せる)
+- 秘密情報(.env・鍵・トークン・顧客データ)を読む・コミットする・成果物や委譲プロンプトに貼る
 - 外部スキル・エージェント定義を、検査(skill-scanner)と人間の承認なしに導入する
-  (手順は [skill-install スキル](.claude/skills/skill-install/SKILL.md))
+  ([skill-install](.claude/skills/skill-install/SKILL.md))
 
 ## 参照ドキュメント(該当作業時に読む)
 
 | いつ読むか | ドキュメント |
 |---|---|
 | bolt を開始・再開するとき | [.claude/skills/bolt/SKILL.md](.claude/skills/bolt/SKILL.md) |
-| プロセス全体・フェーズ判定を知りたいとき | [docs/process/lifecycle.md](docs/process/lifecycle.md) |
-| 案件の性質に合わせてワークフローを選ぶとき | [docs/process/workflows.md](docs/process/workflows.md) |
-| 委譲・CLI 使い分けを判断するとき | [.claude/skills/cli-routing/SKILL.md](.claude/skills/cli-routing/SKILL.md) |
-| 各CLIのベストプラクティスを実践するとき | [docs/process/cli-best-practices.md](docs/process/cli-best-practices.md) |
-| エージェント編成の見直し案を作るとき | [.claude/skills/roster-review/SKILL.md](.claude/skills/roster-review/SKILL.md) |
-| 外部スキルを探す・導入するとき | [.claude/skills/skill-install/SKILL.md](.claude/skills/skill-install/SKILL.md) |
-| ブランチ・コミット・merge のとき | [docs/process/git.md](docs/process/git.md) |
-| リリース(タグ・リリースノート・GO判定)のとき | [docs/process/release.md](docs/process/release.md) |
-| テストループを回すとき | [docs/process/test.md](docs/process/test.md) |
-| レビューを依頼・実施するとき | [docs/process/review.md](docs/process/review.md)(運用ルール)+ [.claude/skills/cross-review/SKILL.md](.claude/skills/cross-review/SKILL.md)(実行手順) |
-| PRFAQ を書くとき | [.claude/skills/prfaq/SKILL.md](.claude/skills/prfaq/SKILL.md) |
-| UX 調査をするとき | [.claude/skills/ux-research/SKILL.md](.claude/skills/ux-research/SKILL.md) |
-| ユーザーストーリーを書くとき | [.claude/skills/user-story/SKILL.md](.claude/skills/user-story/SKILL.md) |
-| UX 設計(画面フロー・情報設計)をするとき | [.claude/skills/ux-design/SKILL.md](.claude/skills/ux-design/SKILL.md) |
-| 成果物テンプレートが必要なとき | [docs/work/README.md](docs/work/README.md) / [docs/product/templates/](docs/product/templates/) / [docs/design/templates/](docs/design/templates/) |
+| プロセス全体・フェーズ判定 | [docs/process/lifecycle.md](docs/process/lifecycle.md) |
+| 案件に合わせてワークフローを選ぶ | [docs/process/workflows.md](docs/process/workflows.md) |
+| 委譲・CLI 使い分け・役割の責務 | [.claude/skills/cli-routing/SKILL.md](.claude/skills/cli-routing/SKILL.md) |
+| 各CLIのベストプラクティス | [docs/process/cli-best-practices.md](docs/process/cli-best-practices.md) |
+| 編成の見直し案を作る | [.claude/skills/roster-review/SKILL.md](.claude/skills/roster-review/SKILL.md) |
+| 外部スキルを探す・導入する | [.claude/skills/skill-install/SKILL.md](.claude/skills/skill-install/SKILL.md) |
+| ブランチ・コミット・merge | [docs/process/git.md](docs/process/git.md) |
+| リリース(タグ・ノート・GO判定) | [docs/process/release.md](docs/process/release.md) |
+| テストループ | [docs/process/test.md](docs/process/test.md) |
+| レビュー | [docs/process/review.md](docs/process/review.md)(運用)+ [cross-review](.claude/skills/cross-review/SKILL.md)(手順) |
+| PRFAQ / UX調査 / ユーザーストーリー / UX設計 | [.claude/skills/prfaq/](.claude/skills/prfaq/SKILL.md) / [ux-research/](.claude/skills/ux-research/SKILL.md) / [user-story/](.claude/skills/user-story/SKILL.md) / [ux-design/](.claude/skills/ux-design/SKILL.md) |
+| 成果物テンプレート | [docs/work/README.md](docs/work/README.md) / [docs/product/templates/](docs/product/templates/) / [docs/design/templates/](docs/design/templates/) |
 
 ## 記述言語
 
-ドキュメント・コミュニケーションは日本語主体。コード識別子・コマンド・技術用語は英語のまま。
+日本語主体。コード識別子・コマンド・技術用語は英語のまま。
 
 ## プロジェクト固有
 
-<!-- このテンプレートを導入したプロジェクトで追記する:
-- プロダクト概要:
-- 技術スタック:
-- ビルド: `<command>`
-- テスト: `<command>`(グリーン判定に使う正式コマンド)
-- lint/format: `<command>`
-- バージョニング: SemVer | 日付タグ(release.md 参照)
-- リリース固有手順: `<デプロイ/公開のコマンドや手順へのリンク>`
-- リリースノートの対象読者: エンドユーザー | 開発者 | 社内
+<!-- 導入プロジェクトで追記:
+- プロダクト概要: / 技術スタック:
+- ビルド: `<command>` / テスト: `<command>`(グリーン判定の正式コマンド)/ lint: `<command>`
+- バージョニング: SemVer | 日付タグ / リリース固有手順: <リンク> / リリースノートの対象読者:
 -->
 
 - ドキュメント検証(このリポジトリの正式グリーン判定):
   `./tools/check-links.sh && ./tools/test-check-links.sh`
-- このリポジトリ自身の bolt 記録は、merge 後に `docs/work/` から `docs/examples/` へ移す
-  (テンプレート利用者の作業場を汚さない。examples は導入時に削除可)
+- このリポジトリ自身の bolt 記録は merge 後に `docs/work/` から `docs/examples/` へ移す

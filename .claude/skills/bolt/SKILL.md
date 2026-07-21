@@ -13,17 +13,19 @@ bolt は「1トピックを `bolt_max_size` の範囲で収束させる」作業
 1. **サイズ確認** — トピックが1セッションで収束するサイズか判断する。大きければ分割し、
    最初の1つだけ始める。
 2. **プロファイル選択** — 案件の性質(設計重視/MVP速度/スライド共有など)に合わせて
-   [docs/process/workflows.md](../../../docs/process/workflows.md) からプロファイルを選び、
-   **standard を含めて** intent.md に「プロファイル: <名前>」と1行書く。
+   [docs/process/workflows.md](../../../docs/process/workflows.md) からプロファイルを選ぶ。
 3. **issue 作成** — リモートがある場合、intent の骨子(課題・やること・完了の定義)で
    issue を作る(`gh issue create`)。既存 issue があれば紐付ける。
-4. **ブランチ+worktree 作成** —
+4. **ブランチ+worktree+work dir 作成** — `tools/new-bolt.sh <topic> [issue番号]` で
+   一括作成する(worktree・ブランチ・`docs/work/<topic>/intent.md` のひな形まで)。
+   `gh` が無い環境では自動でローカル命名 `bolt/<topic>` にフォールバックする。
+   スクリプトが使えない場合は手動で行う:
    `git worktree add ../<repo>-wt-issue-<番号> -b bolt/<issue番号>-<topic>`
    (issue の無いローカル運用は `bolt/<topic>`。日付は使わない —
-   [git.md](../../../docs/process/git.md))。
-5. **work ディレクトリ作成** — `docs/work/<topic>/` を作り、`intent.md` を記入する
-   (テンプレート: [docs/work/README.md](../../../docs/work/README.md)、
-   issue があれば `Issue: #<番号>` を1行)。intent は3行でもよいが、「やらないこと」と
+   [git.md](../../../docs/process/git.md))、続けて `docs/work/<topic>/intent.md` を
+   [docs/work/README.md](../../../docs/work/README.md) のテンプレートで作る。
+5. **intent.md 記入** — ひな形に、選んだプロファイル(**standard を含めて**明記)・
+   課題・スコープ・やらないこと・完了の定義を書く。3行でもよいが「やらないこと」と
    「完了の定義」は必ず書く。
 
 ## フェーズ判定と進行

@@ -37,6 +37,18 @@ dot-agent は、指揮者(オーケストレーター)と奏者(worker)が、企
 | マルチモーダル生成・比較チェック(画像・スライド。最終検証は指揮者) | Antigravity | Claude(可能な範囲) | Gemini 系が強い傾向。モデル更新ごとに見直す |
 | クロスレビュー(一次) | 作成者と**別の**エージェント([review.md](docs/process/review.md)) | cross-reviewer subagent(同モデルの旨を記録) | 別モデル原則自体は変えない |
 
+### モデル優先順位(★単一の定義箇所)
+
+Codex・Antigravity への委譲時に指定するモデルの優先順位。先頭から試し、非対応・エラー
+(例: 「要アップグレード」400エラー)なら次点を明示指定して再試行する(cli-routing の
+`max_delegation_retries` の1回として数える。呼び出し例は
+[cli-routing の呼び出し方](.claude/skills/cli-routing/SKILL.md))。
+
+| 委譲先 | 優先順位(左が第一候補) |
+|---|---|
+| Codex | `gpt-5.6-terra` → `gpt-5.5` |
+| Antigravity | `gemini-3-pro` → `gemini-3.5-flash` |
+
 ## 収束パラメータ(★単一の定義箇所)
 
 数値はこの表だけで定義し、他の doc はパラメータ名で参照する。プロジェクト調整は「値」列を

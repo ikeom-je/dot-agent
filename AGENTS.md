@@ -86,7 +86,7 @@ Codex・Antigravity への委譲時に指定するモデルの優先順位。先
 | 編成の見直し案を作る | [.claude/skills/roster-review/SKILL.md](.claude/skills/roster-review/SKILL.md) |
 | 外部スキルを探す・導入する | [.claude/skills/skill-install/SKILL.md](.claude/skills/skill-install/SKILL.md) |
 | issue・ブランチ・worktree・merge | [docs/process/git.md](docs/process/git.md) |
-| 知見を記録する・思い出す | [docs/knowledge/README.md](docs/knowledge/README.md)(dump 機構)+ [insights.md](docs/knowledge/insights.md) |
+| 知見を記録する・思い出す | [docs/knowledge/README.md](docs/knowledge/README.md)(dump 機構・3層探索モデル)+ [insights.md](docs/knowledge/insights.md)。検索は `tools/search-knowledge.sh <キーワード>` |
 | リリース(タグ・ノート・GO判定) | [docs/process/release.md](docs/process/release.md) |
 | テストループ | [docs/process/test.md](docs/process/test.md) |
 | レビュー | [docs/process/review.md](docs/process/review.md)(運用)+ [cross-review](.claude/skills/cross-review/SKILL.md)(手順) |

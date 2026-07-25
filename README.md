@@ -46,6 +46,7 @@
 | `CLAUDE.md` | AGENTS.md を import + Claude=オーケストレーター宣言 |
 | `GEMINI.md` | AGENTS.md 参照 + Gemini/Antigravity=worker 宣言 |
 | `.claude/skills/bolt/` | 1サイクルの進行役(開始→フェーズ判定→収束チェック) |
+| `.claude/output-styles/fable-mode.md` | Sonnet/Opus向け報告スタイル補強(結論先行・境界意識)。`/config`でオプトイン |
 | `.claude/skills/cli-routing/` | CLI 使い分けの判断表・委譲の損益分岐・失敗時フォールバック |
 | `.claude/skills/cross-review/` | クロスモデルレビューの実行手順(依頼の型・往復プロトコル・採否記録) |
 | `tools/` | check-links.sh: リンク検証(このリポジトリの正式グリーン判定。既知の制限: コードブロック内のリンク記法も検査対象のため、実在しない例をリンク記法で書かない)。new-bolt.sh: bolt 開始(worktree・ブランチ・work dir)の一括作成。search-knowledge.sh: 知見の3層(insights.md・git log・issue/PR)横断検索 |

@@ -24,6 +24,28 @@ Code to rightsize your skills, and CLAUDE.md files"。2026-07-25にWebFetchで�
 ような棚卸し作業)の一次手段として試す価値がある(手元のCLIバージョンでの利用可否は
 導入時に確認する)。
 
+**Sonnet/Opus 向け Fable5 的振る舞いの補強(2026-07-25)**: 出典
+https://qiita.com/TakanobuSano/items/68e136b22294e1575d55 、
+https://note.com/hataraiku/n/n70ca8c2e217a (2026-07-25取得)+
+公式 [Output styles](https://code.claude.com/docs/en/output-styles) /
+[costs (effort)](https://code.claude.com/docs/en/costs) で仕様確認済み。
+
+- **Output Style で報告スタイルを補強** — `.claude/output-styles/` はプロジェクト単位で
+  使え、Claude Code 専用機能(Codex/Antigravity は読まない)。既存のコーディング規律を
+  消さないため `keep-coding-instructions: true` を必ず付ける(既定 `false`)。
+  [.claude/output-styles/fable-mode.md](../../.claude/output-styles/fable-mode.md) に
+  結論先行・境界意識(状態変更前の証拠確認)・即行動(承認ゲートは除く)を収録した。
+  有効化は `/config` でのオプトイン(settings.json での既定化はしていない)。
+- **サブエージェントは継承しない**(fork は例外)。`.claude/agents/` 配下の Claude 実行の
+  subagent には別途最小限の出力規約を書く必要がある(cross-reviewer / ux-researcher に反映)。
+- **effort レベルは `/effort` または `/model` で調整可能**(公式確認済み)。設計判断・
+  レビューなど精度が要る局面で引き上げる。「Fable5 の低effort ≒ 旧モデルの高effort」の
+  ような換算式は公式文書に存在しないため、断定的に使わない。
+- **意図的に転記しなかったもの**: 提示された行動規範のうち「進捗の実証」「スコープ規律」は
+  dot-agent の既存規約(GREEN判定権限・intent.md規律)と重複するため、「ターン終了規律」は
+  Claude Code の既定の振る舞いに近い領域のため output style には書かない(Claude 5世代の
+  「重複を書かない」原則を優先。詳細と各項目の判断根拠は fable-mode.md 内に記録)。
+
 | 公式BPの要点 | dot-agent での実践 |
 |---|---|
 | **コンテキストウィンドウが最重要リソース**。満杯になるほど性能低下 | bolt を `bolt_max_size` に収める・無関係なタスクを混ぜない(1 bolt = 1 トピック)。話題が変わったら bolt を閉じて新セッション+新 bolt |

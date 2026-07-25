@@ -6,11 +6,29 @@
 
 ## Claude Code(指揮者・既定)
 
-出典: https://code.claude.com/docs/ja/best-practices (2026-07-20 取得)
+出典: https://code.claude.com/docs/ja/best-practices (2026-07-20 取得)、
+https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models
+(2026-07-25 取得。Claude 5世代モデル固有の追補)
+
+**Claude 5世代の追補(2026-07-25)**: Anthropic はシステムプロンプトを80%以上削減しても
+コード評価に測定可能な低下が無かったと報告している(原文: "We removed over 80% of Claude
+Code's system prompt for models like Claude Opus 5 and Claude Fable 5"。逐語引用を
+2026-07-25にWebFetchで再確認済み)。核心は「ルールを与える→判断に任せる」への転換で、
+"leave documentation as appropriate" と "DO NOT add comments" のような**矛盾する指示**が
+悪影響を与えていた、という具体例がある(こちらも同様に逐語確認済み)。ツール/スキルの
+説明は使用例の羅列よりパラメータ構造の明確さを重視し、段階的開示(必要時にスキルを
+読み込む)を推奨する。記事は `/doctor` コマンド(Claude Code でスキル・CLAUDE.md を
+適正サイズに調整する)の存在にも言及している(原文: "use the command /doctor in Claude
+Code to rightsize your skills, and CLAUDE.md files"。2026-07-25にWebFetchで逐語確認済み)。
+利用可能なら AGENTS.md/skills の定期的な削減(過去に本リポジトリで行った圧縮 bolt の
+ような棚卸し作業)の一次手段として試す価値がある(手元のCLIバージョンでの利用可否は
+導入時に確認する)。
 
 | 公式BPの要点 | dot-agent での実践 |
 |---|---|
 | **コンテキストウィンドウが最重要リソース**。満杯になるほど性能低下 | bolt を `bolt_max_size` に収める・無関係なタスクを混ぜない(1 bolt = 1 トピック)。話題が変わったら bolt を閉じて新セッション+新 bolt |
+| **判断に任せる>硬いルール**(Claude 5世代)。矛盾する指示を置かない | AGENTS.md/CLAUDE.mdの禁止事項は安全・プロセス上必須のガードレールのみに絞る(検証していないコミット・秘密情報の取り扱い等)。スタイルの好みのような判断で足りる領域は「〜に従う」より「〜を判断する」と書く |
+| ツール/スキル説明は使用例の羅列よりパラメータ構造の明確さ(Claude 5世代) | skill frontmatterの`description`は「いつ使うか」を1文で明確に。エージェント定義(`.claude/agents/`)も長い使用例より役割・入出力の構造を優先 |
 | 調査・大量読みはサブエージェントに分離し、本体のコンテキストを守る | [cli-routing](../../.claude/skills/cli-routing/SKILL.md) の委譲(ダイジェストで受ける)。調査系は編成表の担当へ |
 | **検証手段を与える**(pass/fail を返すチェック)。成功の主張ではなく証拠を出させる | AGENTS.md プロジェクト固有欄の正式テストコマンド=グリーン判定。証拠は PR 本文に記録([test.md](test.md)) |
 | **探索→計画→実装→コミット**。ただし小さく明確な修正は計画を省略 | lifecycle のフェーズ(spec→plan→実装)がこの型。省略判断は [workflows.md](workflows.md) のプロファイルと lifecycle の省略ルール |

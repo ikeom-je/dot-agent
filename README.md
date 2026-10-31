@@ -15,6 +15,8 @@
   [cli-routing の呼び出し方](.claude/skills/cli-routing/SKILL.md)(ヘッドレスCLIの
   汎用経路を含む)と [skill-install](.claude/skills/skill-install/SKILL.md)(外部スキルの
   安全な導入)を参照。
+- Claude Code / Codex / Antigravity / DeepSeek Harness のどれでも AGENTS.md を起点に使える
+  (Codex は AGENTS.md をネイティブに読む。それ以外の読ませ方は cli-routing)。
 
 ## 思想(3行)
 
@@ -42,7 +44,7 @@
 
 | パス | 役割 |
 |---|---|
-| `AGENTS.md` | ★単一ソースの常時コンテキスト(原則・エージェント編成表・収束パラメータ・禁止事項) |
+| `AGENTS.md` | ★単一ソースの常時コンテキスト(原則・エージェント編成表・規模別モデル割り当て・収束パラメータ・禁止事項) |
 | `CLAUDE.md` | AGENTS.md を import + Claude=オーケストレーター宣言 |
 | `GEMINI.md` | AGENTS.md 参照 + Gemini/Antigravity=worker 宣言 |
 | `.claude/skills/bolt/` | 1サイクルの進行役(開始→フェーズ判定→収束チェック) |
@@ -65,7 +67,7 @@
 - `.claude/settings.json` — 読み取り系と git の日常操作を allow、破壊的操作
   (`rm -rf`、force push、`reset --hard`)と秘密情報の読み取りを deny する安全側の例。
 - `.codex/config.toml` — worker 用途のため `workspace-write` サンドボックス+ネットワーク遮断。
-  モデルは導入プロジェクトで指定する。
+  モデルと effort の既定値は AGENTS.md「モデル割り当て」の標準規模・実装に合わせてある。
 - `.gemini/settings.json` — GEMINI.md をコンテキストとして読み、自動承認は off、
   破壊的コマンドを除外する例。
 

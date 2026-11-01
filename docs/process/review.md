@@ -29,10 +29,12 @@
 
 | 成果物を作った主体 | レビュアー |
 |---|---|
-| Claude(オーケストレーター自身) | **Codex(第一候補)**。Codex 不能時は Antigravity(antigravity:review)→ cross-reviewer subagent |
-| Codex(codex-worker 経由) | Claude 自身がレビュー。大きい diff なら Antigravity で一次レビュー後に Claude |
+| Claude(オーケストレーター自身) | **Codex + Antigravity の両方**。片方が不能なら実施できる方だけで行い、両方不能なら cross-reviewer subagent(いずれもその旨を記録) |
+| Codex(codex-worker 経由) | Antigravity が一次レビューし(標準規模では Codex も補助で加わる)、Claude 自身が最終レビュー |
 | Antigravity | Claude 自身がレビュー(必須。Antigravity の出力は必ず Claude が検証する) |
 
+各レビュアーが使うモデルと effort は [AGENTS.md「モデル割り当て」](../../AGENTS.md)(規模別)に従う。
+レビュアーが複数のときは指摘を統合してから採否を判断し、往復数は成果物単位で数える。
 ドキュメント成果物(PRFAQ / spec / plan)も同じ表に従う。cross-reviewer subagent は
 コードだけでなくドキュメントのレビューにも使う。
 

@@ -19,7 +19,8 @@ description: タスクを Claude Code / Codex / Antigravity のどれで実行�
 ## スキル・エージェント定義の互換性(全CLI共通)
 
 `.claude/skills/*/SKILL.md` と `.claude/agents/*.md` は全CLI共通の Markdown 定義
-(置き場所が `.claude/` なだけ)。Claude Code 以外のCLIが使う場合:
+(置き場所が `.claude/` なだけ)。Claude Code 以外のCLI(Codex / Antigravity /
+DeepSeek Harness 等)が使う場合:
 
 - **スキル**: 自動発見されないので、AGENTS.md の参照表からパスを引き、ファイルを読んで従う。
 - **エージェント定義**: frontmatter の `tools:`(Claude Code 固有)は無視し、
@@ -31,12 +32,17 @@ description: タスクを Claude Code / Codex / Antigravity のどれで実行�
 2. [AGENTS.md のエージェント編成表](../../../AGENTS.md) でその領域の「担当」を引く
    (担当の定義はあの表が唯一。ここには書かない)。
 3. 下の損益分岐を超えるときだけ委譲する。超えないなら領域に関わらず自分でやる。
+4. 委譲するときは、intent.md の規模(標準/軽量修正)と役割から
+   [AGENTS.md のモデル割り当て](../../../AGENTS.md) のモデルと effort を引く。
 
 ## 委譲の損益分岐
 
 委譲には「仕様の書面化+往復+検証」の固定コストがかかる。以下は**委譲しない**:
 
-- 小さいタスク(1〜2ファイルの編集、リネーム、一行修正)— 往復コストの方が高い
+- 極小タスク(一行修正・typo・リネーム)— 指示を書くより自分で直す方が安い。
+  規模が**軽量修正**のタスク(条件は AGENTS.md「モデル割り当て」)は、intent.md の
+  修正内容と完了条件を書面として軽量修正列のモデルに委譲する(spec/plan との兼用は
+  [lifecycle.md](../../../docs/process/lifecycle.md) の省略ルール)
 - 判断が重いタスク(要件の解釈、設計のトレードオフ、レビューの採否)— 指揮者の仕事
 - 自己完結していないタスク(会話の文脈を大量に引き継がないと説明できないもの)
 
@@ -60,7 +66,7 @@ description: タスクを Claude Code / Codex / Antigravity のどれで実行�
 - 上限に達したらその委譲先を諦め、**編成表(AGENTS.md)の「代替」列を左から順に**試す。
   代替経路も同じ上限で数える(失敗し続ける委譲先へのリトライ連打をしない)。
 - **同一委譲先内でも、モデルが非対応・エラー(例: 「要アップグレード」400エラー)なら
-  [AGENTS.md のモデル優先順位](../../../AGENTS.md) の次点を明示指定して再試行する**
+  [AGENTS.md のモデル割り当て](../../../AGENTS.md) の次点を明示指定して再試行する**
   (これも1回と数える。「呼び出し方」のモデル指定例を参照)。
 - 最後の代替まで失敗したら、bolt の該当タスクを中断して `escalation_to` に報告する。
 
@@ -85,19 +91,33 @@ description: タスクを Claude Code / Codex / Antigravity のどれで実行�
 
 ### 指揮者が Claude Code のとき(最適経路)
 
-呼び出しには [AGENTS.md のモデル優先順位](../../../AGENTS.md) の第一候補モデルを明示指定する
-(未指定だと環境のデフォルトモデルが動き、非対応エラーになることがある)。
+呼び出しには [AGENTS.md のモデル割り当て](../../../AGENTS.md) から、規模×役割のモデルと
+effort を明示指定する(未指定だと環境のデフォルトモデルが動き、非対応エラーになることがある)。
+effort の指定先: Claude は `/effort`(ユーザーが決める)、Codex は `model_reasoning_effort`、
+Antigravity はモデルID(`gemini-3.8-flash-high` のように effort を含む。`--effort` と併用すると
+エラーになる)。subagent・MCP 経由でも同じ値を `model` / `config` に渡す。Bash から
+直接呼ぶ場合(MCP・プラグインが使えないときの経路でもある)の例:
+
+```bash
+# Codex: 標準入力を閉じる(</dev/null)。閉じないとバックグラウンド実行で入力待ちのまま止まる
+codex exec -m gpt-6.1-sol -c model_reasoning_effort='"high"' -s workspace-write "<指示>" </dev/null
+codex exec -m gpt-6.1-sol -c model_reasoning_effort='"medium"' -s read-only "<レビュー依頼>" </dev/null
+# Antigravity: 使えるモデルIDは agy models で確かめる
+agy --model gemini-4-argon-medium -p "<レビュー依頼>"
+```
 
 - **Codex へ**: `codex-worker` subagent([.claude/agents/codex-worker.md](../../agents/codex-worker.md))、
-  またはレビューなら mcp__codex__codex(read-only)。`model` パラメータに
-  モデル優先順位の第一候補を指定し、非対応エラーなら次点を指定して再試行する。
+  またはレビューなら mcp__codex__codex(read-only)。`model` パラメータにモデル、
+  `config` に `model_reasoning_effort` を指定し、非対応エラーなら次点を指定して再試行する。
 - **Antigravity へ**: `antigravity:delegate` スキル(または antigravity-delegate subagent)。
   Web調査は `antigravity:research`、クロスレビューは `antigravity:review`。
-  `agy-delegate` はモデル優先順位の第一候補、失敗時は次点を指定する
-  (ティア指定 `--tier` とは別軸。速度優先のバルク処理は `--tier flash` と
-  次点モデルを併用してよい)。
+  `agy-delegate -m <モデルID>` で表のモデルを指定し、失敗時は次点を指定する
+  (ティア指定 `--tier` とは別軸)。
   マルチモーダル(画像生成・検出/比較・スライド生成)も同経路で委譲し、
   成果物(画像・スライド)は指揮者が実物を開いて検証する。
+- **レビュアーが複数のとき**(標準規模): 表のレビュアーに1件ずつ順番に依頼し、
+  指摘を統合してから採否を判断する(往復数は成果物単位で数える。手順は
+  [cross-review](../cross-review/SKILL.md))。
 - **クロスレビュー**: `cross-reviewer` subagent。運用ルールは
   [docs/process/review.md](../../../docs/process/review.md)。
 
@@ -108,9 +128,10 @@ MCP・プラグイン・subagent 機構が無い環境では、対象CLIのヘ�
 
 | 呼び出し先 | コマンド例(バージョンにより異なる。交代時の実案件検証で要確認) |
 |---|---|
-| Claude | `claude -p "<指示>"` |
-| Codex | `codex exec "<指示>"`(read-only レビューはサンドボックスオプションを併用) |
-| Antigravity | `agy -p "<指示>"`(または環境のラッパー。Web検索系は yolo/承認オプションが必要な場合あり) |
+| Claude | `claude -p --model <モデル> "<指示>"` |
+| Codex | `codex exec -m <モデル> -c model_reasoning_effort='"<effort>"' "<指示>" </dev/null`(read-only レビューは `-s read-only`) |
+| Antigravity | `agy --model <モデルID> -p "<指示>"`(または環境のラッパー。Web検索系は yolo/承認オプションが必要な場合あり) |
+| DeepSeek Harness | `ollama launch dsh --model <モデル>` または `npx @deepseek-ai/dsh` で起動し、起動後に指示を渡す(ヘッドレス実行と AGENTS.md の自動読み込みは未確認。developer preview のため互換性が変わりうる。指示の型どおり先頭で AGENTS.md を読ませる) |
 
 - 指示の型: 「まず AGENTS.md を読み、次に <エージェント定義のパス> の本文を役割として、
   <spec/plan のパス> のタスクを実行し、ダイジェスト(変更ファイル一覧・要約・実行した

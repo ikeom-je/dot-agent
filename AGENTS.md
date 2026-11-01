@@ -5,6 +5,8 @@
 
 dot-agent は、指揮者(オーケストレーター)と奏者(worker)が、企画から設計・実装・
 テスト・リリースまでを **bolt** という小さなサイクルで回すテンプレートフレームワーク。
+対応CLI: Claude Code / Codex / Antigravity(agy)/ DeepSeek Harness(dsh)。どのCLIも起点は
+このファイル(CLI ごとの読み方・呼び出し方は [cli-routing](.claude/skills/cli-routing/SKILL.md))。
 
 ## 原則(常時前提)
 
@@ -30,24 +32,45 @@ dot-agent は、指揮者(オーケストレーター)と奏者(worker)が、企
 | 能力領域 | 担当 | 代替(左から順に試す) | 変更の目安 |
 |---|---|---|---|
 | 指揮・判断・検証・レビュー最終採否 | 指揮者(既定: Claude Code) | なし(委譲不可) | 責務は変更しない(担い手の交代のみ可) |
-| 判断の重い実装・難所・小タスク | 指揮者 | なし(委譲しない) | 変更しない |
-| 書面化済みの独立実装・テスト生成 | Codex | Antigravity → Claude | コーディングが得意なモデルが変わったら |
+| 判断の重い実装・難所・極小タスク(一行修正・typo・リネーム) | 指揮者 | なし(委譲しない) | 変更しない |
+| 書面化済みの実装・テスト設計(軽量修正を含む) | Codex | Antigravity → Claude | コーディングが得意なモデルが変わったら |
 | バルク生成・機械的 migration | Antigravity | Codex → Claude | 大量・反復に強い低コストモデルへ |
 | Web検索・調査・長文要約 | Antigravity | Claude 自身(WebSearch)→ ux-researcher subagent | live 検索を持つモデルへ |
 | マルチモーダル生成・比較チェック(画像・スライド。最終検証は指揮者) | Antigravity | Claude(可能な範囲) | Gemini 系が強い傾向。モデル更新ごとに見直す |
-| クロスレビュー(一次) | 作成者と**別の**エージェント([review.md](docs/process/review.md)) | cross-reviewer subagent(同モデルの旨を記録) | 別モデル原則自体は変えない |
+| テスト・クロスレビュー(一次) | 作成者と**別の**エージェント(規模別の担当は下の「モデル割り当て」。[review.md](docs/process/review.md)) | cross-reviewer subagent(同モデルの旨を記録) | 別モデル原則自体は変えない |
 
-### モデル優先順位(★単一の定義箇所)
+### モデル割り当て(★単一の定義箇所)
 
-Codex・Antigravity への委譲時に指定するモデルの優先順位。先頭から試し、非対応・エラー
-(例: 「要アップグレード」400エラー)なら次点を明示指定して再試行する(cli-routing の
-`max_delegation_retries` の1回として数える。呼び出し例は
-[cli-routing の呼び出し方](.claude/skills/cli-routing/SKILL.md))。
+作業の重さで「標準」と「軽量修正」を選び、委譲するときは呼び出し側でモデルと effort を
+明示する(ユーザー設定の既定値に頼らない — 既定値が変わっても委譲先のモデルがぶれないように)。
+規模は指揮者が bolt 開始時に判定し、intent.md に `規模: 標準` / `規模: 軽量修正` と1行書く。
+どちらの規模でも**最終レビューと判断は指揮者**が行う。表記は「モデルID(effort)」で、
+Antigravity はモデルID自体に effort を含む(`agy models` で一覧)。呼び出し方は
+[cli-routing](.claude/skills/cli-routing/SKILL.md)。
 
-| 委譲先 | 優先順位(左が第一候補) |
-|---|---|
-| Codex | `gpt-5.6-terra` → `gpt-5.5` |
-| Antigravity | `gemini-3-pro` → `gemini-3.5-flash` |
+| 役割 | 標準(計画・設計・複雑な実装) | 軽量修正 |
+|---|---|---|
+| 計画・指揮・最終レビューと判断 | Claude `claude-opus-5-5`(medium) | Claude `claude-opus-5-5`(medium) |
+| 実装・テスト設計 | Codex `gpt-6.1-sol`(high) | Codex `gpt-6-luna`(medium) |
+| テスト・レビュー(Codex 作の diff) | Codex `gpt-6.1-sol`(medium)+ agy `gemini-4-argon-medium` + agy `gemini-3.8-flash-high`。すべて実行する | agy `gemini-3.8-flash-medium` |
+| レビュー(指揮者作の生成物) | Codex `gpt-6.1-sol`(medium)+ agy `gemini-4-argon-medium` + agy `gemini-3.8-flash-high` | Codex `gpt-6-luna`(medium)+ agy `gemini-3.8-flash-medium` |
+| 上記以外の委譲(バルク生成・マルチモーダル・代替経路。調査は下の箇条書き) | Codex `gpt-6.1-sol`(medium)/ agy `gemini-4-argon-medium` | Codex `gpt-6-luna`(medium)/ agy `gemini-3.8-flash-medium` |
+
+- **軽量修正の条件**(すべて満たすとき): 設計・公開インターフェース・スキーマを変えない /
+  差分が目安 50行・3ファイル以下 / 何をするかが issue で決まっている(文言・テストの追加・
+  1関数内のバグ修正など。typo・一行修正のような極小タスクは委譲せず指揮者が直接直す)/ 課金・認証・秘密情報に触れない。迷ったら標準にする。実装して条件を
+  超えた、またはレビューで重大指摘が出たら標準に戻してやり直す。
+- **誰が**レビューするかは [review.md](docs/process/review.md) の作成者別の表で決め、この表は
+  そのレビュアーが**どのモデルで**動くかを決める。Codex 作の diff を Codex がレビューしても
+  同じモデルなので別モデル原則には数えない(補助の指摘として扱い、独立したレビュアーは
+  Gemini と指揮者)。
+- 調査(Web検索・長文要約)は規模に関わらず `gemini-3.8-flash-medium` を基本にし、深い調査は
+  指揮者の判断で `gemini-4-argon-medium` に上げてよい。
+- 使ったモデルと effort は PR 本文の検証記録に書く。
+- **非対応・エラー時の次点**(cli-routing の `max_delegation_retries` の1回として数える):
+  `gpt-6.1-sol` ⇄ `gpt-6-luna`(effort は維持)/ `gemini-4-argon-*` ⇄ `gemini-3.8-flash-*`
+  (同じ effort)。Gemini の quota 切れは agy 経由の `claude-sonnet-5-5-medium` に切り替えて
+  続行してよいが、Claude 系なので指揮者作の生成物のレビュアーには数えない(記録に残す)。
 
 ## 収束パラメータ(★単一の定義箇所)
 

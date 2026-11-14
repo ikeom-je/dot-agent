@@ -47,7 +47,7 @@ Codex・Antigravity への委譲時に指定するモデルの優先順位。先
 | 委譲先 | 優先順位(左が第一候補) |
 |---|---|
 | Codex | `gpt-5.6-terra` → `gpt-5.5` |
-| Antigravity | `gemini-3-pro` → `gemini-3.5-flash` |
+| Antigravity | `gemini-4-hydrogen-high` → `gemini-4-argon-high` → `gemini-3.8-flash-high` |
 
 ## 収束パラメータ(★単一の定義箇所)
 

@@ -52,9 +52,9 @@ Antigravity はモデルID自体に effort を含む(`agy models` で一覧)。�
 |---|---|---|
 | 計画・指揮・最終レビューと判断 | Claude `claude-opus-5-5`(medium) | Claude `claude-opus-5-5`(medium) |
 | 実装・テスト設計 | Codex `gpt-6.1-sol`(high) | Codex `gpt-6-luna`(medium) |
-| テスト・レビュー(Codex 作の diff) | Codex `gpt-6.1-sol`(medium)+ agy `gemini-4-argon-medium` + agy `gemini-3.8-flash-high`。すべて実行する | agy `gemini-3.8-flash-medium` |
-| レビュー(指揮者作の生成物) | Codex `gpt-6.1-sol`(medium)+ agy `gemini-4-argon-medium` + agy `gemini-3.8-flash-high` | Codex `gpt-6-luna`(medium)+ agy `gemini-3.8-flash-medium` |
-| 上記以外の委譲(バルク生成・マルチモーダル・代替経路。調査は下の箇条書き) | Codex `gpt-6.1-sol`(medium)/ agy `gemini-4-argon-medium` | Codex `gpt-6-luna`(medium)/ agy `gemini-3.8-flash-medium` |
+| テスト・レビュー(Codex 作の diff) | Codex `gpt-6.1-sol`(medium)+ agy `gemini-4-hydrogen-high` + agy `gemini-3.8-flash-high`。すべて実行する | agy `gemini-3.8-flash-medium` |
+| レビュー(指揮者作の生成物) | Codex `gpt-6.1-sol`(medium)+ agy `gemini-4-hydrogen-high` + agy `gemini-3.8-flash-high` | Codex `gpt-6-luna`(medium)+ agy `gemini-3.8-flash-medium` |
+| 上記以外の委譲(バルク生成・マルチモーダル・代替経路。調査は下の箇条書き) | Codex `gpt-6.1-sol`(medium)/ agy `gemini-4-hydrogen-high` | Codex `gpt-6-luna`(medium)/ agy `gemini-3.8-flash-medium` |
 
 - **軽量修正の条件**(すべて満たすとき): 設計・公開インターフェース・スキーマを変えない /
   差分が目安 50行・3ファイル以下 / 何をするかが issue で決まっている(文言・テストの追加・
@@ -68,8 +68,10 @@ Antigravity はモデルID自体に effort を含む(`agy models` で一覧)。�
   指揮者の判断で `gemini-4-argon-medium` に上げてよい。
 - 使ったモデルと effort は PR 本文の検証記録に書く。
 - **非対応・エラー時の次点**(cli-routing の `max_delegation_retries` の1回として数える):
-  `gpt-6.1-sol` ⇄ `gpt-6-luna`(effort は維持)/ `gemini-4-argon-*` ⇄ `gemini-3.8-flash-*`
-  (同じ effort)。Gemini の quota 切れは agy 経由の `claude-sonnet-5-5-medium` に切り替えて
+  `gpt-6.1-sol` ⇄ `gpt-6-luna`(effort は維持)/ Antigravity の標準は
+  `gemini-4-hydrogen-high` → `gemini-4-argon-high` → `gemini-3.8-flash-high` の順、
+  軽量修正・調査は `gemini-4-argon-*` ⇄ `gemini-3.8-flash-*`(同じ effort)。
+  Gemini の quota 切れは agy 経由の `claude-sonnet-5-5-medium` に切り替えて
   続行してよいが、Claude 系なので指揮者作の生成物のレビュアーには数えない(記録に残す)。
 
 ## 収束パラメータ(★単一の定義箇所)

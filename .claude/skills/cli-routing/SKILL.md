@@ -103,7 +103,8 @@ Antigravity はモデルID(`gemini-3.8-flash-high` のように effort を含む
 codex exec -m gpt-6.1-sol -c model_reasoning_effort='"high"' -s workspace-write "<指示>" </dev/null
 codex exec -m gpt-6.1-sol -c model_reasoning_effort='"medium"' -s read-only "<レビュー依頼>" </dev/null
 # Antigravity: 使えるモデルIDは agy models で確かめる
-agy --model gemini-4-argon-medium -p "<レビュー依頼>"
+# -p はフラグ列の最後に置く(前に置くと次のフラグをプロンプトとして読む)
+agy --model gemini-4-hydrogen-high -p "<レビュー依頼>"
 ```
 
 - **Codex へ**: `codex-worker` subagent([.claude/agents/codex-worker.md](../../agents/codex-worker.md))、

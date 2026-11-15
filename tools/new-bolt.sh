@@ -46,12 +46,31 @@ else
   BRANCH="bolt/${TOPIC}"
 fi
 
-REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "エラー: git リポジトリ内で実行してください" >&2; exit 1; }
+# worktree の中から実行しても .worktree を入れ子にしないよう、メインの作業ツリーを基準にする。
+# --show-toplevel は実行中の worktree を返し、git-common-dir の親は --separate-git-dir や
+# submodule で作業ツリーと一致しないため、worktree 一覧の先頭(メイン)を使う。
+WT_LIST=$(git worktree list --porcelain 2>/dev/null) || { echo "エラー: git リポジトリ内で実行してください" >&2; exit 1; }
+REPO_ROOT=$(printf '%s\n' "$WT_LIST" | sed -n '1s/^worktree //p')
+if printf '%s\n' "$WT_LIST" | sed -n '2,/^$/p' | grep -qx 'bare'; then
+  echo "エラー: bare リポジトリには対応していません(作業ツリーのあるリポジトリで実行してください)" >&2
+  exit 1
+fi
+COMMON_DIR=$(cd "$REPO_ROOT" && cd "$(git rev-parse --git-common-dir)" && pwd) || { echo "エラー: git ディレクトリを特定できません" >&2; exit 1; }
 
-if [ -n "$ISSUE" ]; then
-  WORKTREE="${REPO_ROOT}-wt-issue-${ISSUE}"
-else
-  WORKTREE="${REPO_ROOT}-wt-${TOPIC}"
+# 置き場所はリポジトリ内の .worktree/<ブランチ名から bolt/ を除いたもの>。リポジトリ外に置くと、
+# 各 CLI のサンドボックス・権限設定で作業ディレクトリ外への読み書きになるため。
+WORKTREE="${REPO_ROOT}/.worktree/${BRANCH#bolt/}"
+
+# .gitignore に無いプロジェクトでも worktree がコミットに混ざらないよう、ローカルの exclude に足す
+# (既に行があれば足さない: .gitignore の否定規則で無視されない場合に毎回増えるのを防ぐ)
+EXCLUDE="$COMMON_DIR/info/exclude"
+if ! git -C "$REPO_ROOT" check-ignore -q .worktree/ && ! grep -qxF '.worktree/' "$EXCLUDE" 2>/dev/null; then
+  mkdir -p "$COMMON_DIR/info"
+  # 末尾に改行の無い exclude に足すと既存の行と連結されるため、先に改行を補う
+  if [ -s "$EXCLUDE" ] && [ -n "$(tail -c 1 "$EXCLUDE")" ]; then
+    echo >> "$EXCLUDE"
+  fi
+  echo ".worktree/" >> "$EXCLUDE"
 fi
 
 git worktree add "$WORKTREE" -b "$BRANCH" || { echo "エラー: worktree の作成に失敗しました" >&2; exit 1; }

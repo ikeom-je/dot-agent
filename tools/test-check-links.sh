@@ -62,6 +62,14 @@ out=$("$SCRIPT" "$t" 2>&1); code=$?
 assert ".git配下の壊れリンクは無視" 0 "$code" "$out" "ALL LINKS OK"
 rm -rf "$t"
 
+# ケース4b: .worktree/ 配下(bolt の worktree)は対象外
+t=$(mktemp -d); make_fixture "$t"
+mkdir -p "$t/.worktree/1-x"
+echo "[broken in worktree](nope.md)" > "$t/.worktree/1-x/x.md"
+out=$("$SCRIPT" "$t" 2>&1); code=$?
+assert ".worktree配下の壊れリンクは無視" 0 "$code" "$out" "ALL LINKS OK"
+rm -rf "$t"
+
 # ケース5: 空リンク () は壊れリンクとして報告される
 t=$(mktemp -d); make_fixture "$t"
 echo "[todo]()" > "$t/empty.md"

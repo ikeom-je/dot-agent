@@ -3,6 +3,7 @@
 # 使い方: tools/check-links.sh [dir]   (省略時: カレントディレクトリ)
 # 終了コード: 0=全リンク有効 / 1=壊れリンクあり
 # スキップ: http(s)リンク、#アンカーのみのリンク。リンク先の #以降 は無視して判定。
+# 対象外: .git/ と .worktree/(bolt の worktree。中身は別ブランチのコピーなので二重に検査しない)。
 # 既知の制限: コードスパン/コードブロック内のリンク記法も検証対象になる。
 set -u
 
@@ -25,7 +26,7 @@ while IFS=: read -r file link; do
     echo "BROKEN: $file -> $link"
     broken=1
   fi
-done < <(grep -roE '\[[^]]*\]\([^)]*\)' --include='*.md' --exclude-dir='.git' "$ROOT" \
+done < <(grep -roE '\[[^]]*\]\([^)]*\)' --include='*.md' --exclude-dir='.git' --exclude-dir='.worktree' "$ROOT" \
          | sed -E 's/\[[^]]*\]\(([^)]*)\)$/\1/')
 
 if [ $broken -eq 0 ]; then

@@ -15,9 +15,18 @@
 - **1 bolt = 1 ブランチ**。命名は issue があれば `bolt/<issue番号>-<topic>`、
   無ければ `bolt/<topic>`(work ディレクトリは `docs/work/<topic>/`。日付は使わない)。
 - main への直接コミットはしない。bolt 開始時に必ずブランチを切る。
-- **worktree を推奨**: `git worktree add ../<repo>-wt-issue-<番号> -b <ブランチ名>` で
-  分離した作業ツリーを作る。main を汚さず、並行 bolt の衝突も防げる。
-  merge 後に `git worktree remove` で片付ける。
+- **worktree を推奨**: 分離した作業ツリーを作る。main を汚さず、並行 bolt の衝突も防げる。
+  置き場所は**メインのリポジトリ直下の `.worktree/`** に統一し、ブランチ名から `bolt/` を
+  除いた名前にする(例: `bolt/25-worktree-dir` → `.worktree/25-worktree-dir`)。
+  `tools/new-bolt.sh` がこの規則で作る(worktree の中から実行してもメイン基準)。手動なら
+  **メインのリポジトリ直下で** `git worktree add .worktree/<issue番号>-<topic> -b bolt/<issue番号>-<topic>`
+  (issue が無ければ `.worktree/<topic>` と `bolt/<topic>`)。worktree の中で実行すると入れ子になる。
+  - リポジトリ外に置かない: どの CLI でも作業ディレクトリの外になり、サンドボックスや
+    権限設定で毎回の承認や拒否が起きる。`.claude/` 配下にも置かない(Claude Code 以外の
+    CLI も同じ worktree を使う)。
+  - `.worktree/` は Git の追跡から外す(テンプレートの .gitignore に記載済み。無い
+    プロジェクトでは new-bolt.sh が `.git/info/exclude` に追記する)。
+  - merge 後にメインのリポジトリ直下で `git worktree remove .worktree/<名前>` を実行して片付ける。
 - ブランチは短命に保つ。1セッションで merge まで到達できないなら bolt が大きすぎる。
 
 ## コミット規約

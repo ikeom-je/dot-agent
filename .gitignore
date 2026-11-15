@@ -25,6 +25,9 @@ __pycache__/
 .venv/
 target/
 
+# bolt の worktree(tools/new-bolt.sh が作る。docs/process/git.md)
+.worktree/
+
 # ローカル設定・ハーネスの一時ファイル(個人環境のみ)
 .claude/settings.local.json
 .claude/scheduled_tasks.lock

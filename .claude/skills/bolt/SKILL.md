@@ -19,9 +19,11 @@ bolt は「1トピックを `bolt_max_size` の範囲で収束させる」作業
 4. **ブランチ+worktree+work dir 作成** — `tools/new-bolt.sh <topic> [issue番号]` で
    一括作成する(worktree・ブランチ・`docs/work/<topic>/intent.md` のひな形まで)。
    `gh` が無い環境では自動でローカル命名 `bolt/<topic>` にフォールバックする。
-   スクリプトが使えない場合は手動で行う:
-   `git worktree add ../<repo>-wt-issue-<番号> -b bolt/<issue番号>-<topic>`
-   (issue の無いローカル運用は `bolt/<topic>`。日付は使わない —
+   スクリプトが使えない場合は手動で行う(メインのリポジトリ直下で実行する。worktree の中で
+   実行すると入れ子になる):
+   `git worktree add .worktree/<issue番号>-<topic> -b bolt/<issue番号>-<topic>`
+   (置き場所はリポジトリ直下の `.worktree/`。issue の無いローカル運用は
+   `.worktree/<topic>` と `bolt/<topic>`。日付は使わない —
    [git.md](../../../docs/process/git.md))、続けて `docs/work/<topic>/intent.md` を
    [docs/work/README.md](../../../docs/work/README.md) のテンプレートで作る。
 5. **intent.md 記入** — ひな形に、選んだプロファイル(**standard を含めて**明記)・
